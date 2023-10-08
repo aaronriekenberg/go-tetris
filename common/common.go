@@ -7,20 +7,37 @@ const (
 
 // (0, 0) is topmost and leftmost cell
 type TetrisModelCoordinate struct {
-	X int
-	Y int
+	x int
+	y int
+}
+
+func NewTetrisModelCoordinate(
+	x, y int,
+) TetrisModelCoordinate {
+	return TetrisModelCoordinate{
+		x: x,
+		y: y,
+	}
 }
 
 func (tmc TetrisModelCoordinate) Valid() bool {
-	return (tmc.X >= 0) && (tmc.X < BoardWidth) && (tmc.Y >= 0) && (tmc.Y < BoardHeight)
+	return (tmc.x >= 0) && (tmc.x < BoardWidth) && (tmc.y >= 0) && (tmc.y < BoardHeight)
 }
 
 func (tmc TetrisModelCoordinate) AddY(delta int) TetrisModelCoordinate {
-	tmc.Y += delta
+	tmc.y += delta
 	return tmc
 }
 
 func (tmc TetrisModelCoordinate) AddX(delta int) TetrisModelCoordinate {
-	tmc.X += delta
+	tmc.x += delta
 	return tmc
+}
+
+func (tmc TetrisModelCoordinate) X() int {
+	return tmc.x
+}
+
+func (tmc TetrisModelCoordinate) Y() int {
+	return tmc.y
 }

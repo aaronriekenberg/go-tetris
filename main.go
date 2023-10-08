@@ -68,7 +68,7 @@ func (tetrisModel *tetrisModel) recomputeDrawableCells() {
 
 	if tetrisModel.currentPiece != nil {
 		for _, coordinates := range tetrisModel.currentPiece.Coordinates() {
-			drawableCells[coordinates.X][coordinates.Y].occupied = true
+			drawableCells[coordinates.X()][coordinates.Y()].occupied = true
 		}
 	}
 
@@ -81,7 +81,7 @@ func (tetrisModel *tetrisModel) isPieceLocationValid(
 	for _, coordinate := range tetrisPiece.Coordinates() {
 		if !coordinate.Valid() {
 			return false
-		} else if tetrisModel.stackCells[coordinate.X][coordinate.Y].occupied {
+		} else if tetrisModel.stackCells[coordinate.X()][coordinate.Y()].occupied {
 			return false
 		}
 	}
@@ -89,10 +89,10 @@ func (tetrisModel *tetrisModel) isPieceLocationValid(
 }
 
 func (tetrisModel *tetrisModel) addNewPiece() {
-	centerCoordinate := common.TetrisModelCoordinate{
-		X: (common.BoardWidth / 2) - 1,
-		Y: 0,
-	}
+	centerCoordinate := common.NewTetrisModelCoordinate(
+		(common.BoardWidth/2)-1,
+		0,
+	)
 
 	newPiece := pieces.CreateRandomPiece(centerCoordinate)
 
@@ -161,7 +161,7 @@ func (tetrisModel *tetrisModel) addCurrentPieceToStack() {
 	currentPiece := tetrisModel.currentPiece
 	if currentPiece != nil {
 		for _, coordinate := range currentPiece.Coordinates() {
-			tetrisModel.stackCells[coordinate.X][coordinate.Y].occupied = true
+			tetrisModel.stackCells[coordinate.X()][coordinate.Y()].occupied = true
 		}
 	}
 	tetrisModel.currentPiece = nil
@@ -173,8 +173,6 @@ func (tetrisModel *tetrisModel) periodicUpdate() {
 	} else {
 		tetrisModel.moveCurrentPieceDown()
 	}
-
-	tetrisModel.recomputeDrawableCells()
 }
 
 var fgStyle = tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorRed)
@@ -185,6 +183,8 @@ func drawBoard(
 	s tcell.Screen,
 ) {
 	// startTime := time.Now()
+
+	tetrisModel.recomputeDrawableCells()
 
 	w, h := s.Size()
 

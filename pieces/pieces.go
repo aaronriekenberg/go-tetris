@@ -14,6 +14,24 @@ type TetrisPiece interface {
 
 type squarePiece struct {
 	centerCoordinate common.TetrisModelCoordinate
+
+	coordinates []common.TetrisModelCoordinate
+}
+
+func newSquarePiece(
+	centerCoordinate common.TetrisModelCoordinate,
+) squarePiece {
+	coordinates := []common.TetrisModelCoordinate{
+		common.NewTetrisModelCoordinate(centerCoordinate.X(), centerCoordinate.Y()),
+		common.NewTetrisModelCoordinate(centerCoordinate.X()+1, centerCoordinate.Y()),
+		common.NewTetrisModelCoordinate(centerCoordinate.X(), centerCoordinate.Y()+1),
+		common.NewTetrisModelCoordinate(centerCoordinate.X()+1, centerCoordinate.Y()+1),
+	}
+
+	return squarePiece{
+		centerCoordinate: centerCoordinate,
+		coordinates:      coordinates,
+	}
 }
 
 func (squarePiece squarePiece) CenterCoordinate() common.TetrisModelCoordinate {
@@ -23,23 +41,15 @@ func (squarePiece squarePiece) CenterCoordinate() common.TetrisModelCoordinate {
 func (squarePiece squarePiece) CloneWithNewCenterCoordinate(
 	newCenterCoordinate common.TetrisModelCoordinate,
 ) TetrisPiece {
-	squarePiece.centerCoordinate = newCenterCoordinate
-	return squarePiece
+	return newSquarePiece(newCenterCoordinate)
 }
 
 func (squarePiece squarePiece) Coordinates() []common.TetrisModelCoordinate {
-	return []common.TetrisModelCoordinate{
-		{X: squarePiece.centerCoordinate.X, Y: squarePiece.centerCoordinate.Y},
-		{X: squarePiece.centerCoordinate.X + 1, Y: squarePiece.centerCoordinate.Y},
-		{X: squarePiece.centerCoordinate.X, Y: squarePiece.centerCoordinate.Y + 1},
-		{X: squarePiece.centerCoordinate.X + 1, Y: squarePiece.centerCoordinate.Y + 1},
-	}
+	return squarePiece.coordinates
 }
 
 func CreateRandomPiece(
 	centerCoordinate common.TetrisModelCoordinate,
 ) TetrisPiece {
-	return squarePiece{
-		centerCoordinate: centerCoordinate,
-	}
+	return newSquarePiece(centerCoordinate)
 }
