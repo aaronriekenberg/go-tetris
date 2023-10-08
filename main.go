@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"slices"
 	"time"
 
 	"github.com/aaronriekenberg/go-tetris/common"
@@ -168,26 +169,30 @@ func (tetrisModel *tetrisModel) addCurrentPieceToStack() {
 		}
 	}
 	tetrisModel.currentPiece = nil
+
+	tetrisModel.handleFilledStackRows()
 }
 
-// func (tetrisModel *tetrisModel) handleFilledStackRows() {
-// 	row := common.BoardRows
+func (tetrisModel *tetrisModel) handleFilledStackRows() {
+	row := common.BoardRows - 1
 
-// 	for row >= 0 {
-// 		rowIsFull := true
-// 		for _, cell := range tetrisModel.stackCells[row] {
-// 			if !cell.occupied {
-// 				rowIsFull = false
-// 				break
-// 			}
-// 		}
-// 		if rowIsFull {
-// 			tetrisModel.stackCells = slices.Delete(tetrisModel.stackCells, row, row+1)
-// 		} else {
-
-// 		}
-// 	}
-// }
+	for row >= 0 {
+		rowIsFull := true
+		for _, cell := range tetrisModel.stackCells[row] {
+			if !cell.occupied {
+				rowIsFull = false
+				break
+			}
+		}
+		if rowIsFull {
+			tetrisModel.stackCells = slices.Delete(tetrisModel.stackCells, row, row+1)
+			tetrisModel.stackCells = slices.Insert(tetrisModel.stackCells, 0, make([]tetrisModelCell, common.BoardColumns))
+			// numLines += 1
+		} else {
+			row -= 1
+		}
+	}
+}
 
 func (tetrisModel *tetrisModel) periodicUpdate() {
 	if tetrisModel.currentPiece == nil {
