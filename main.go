@@ -28,6 +28,7 @@ import (
 
 type tetrisModelCell struct {
 	occupied bool
+	color    tcell.Color
 }
 
 type tetrisModel struct {
@@ -69,6 +70,7 @@ func (tetrisModel *tetrisModel) recomputeDrawableCells() {
 	if tetrisModel.currentPiece != nil {
 		for _, coordinates := range tetrisModel.currentPiece.Coordinates() {
 			drawableCells[coordinates.X()][coordinates.Y()].occupied = true
+			drawableCells[coordinates.X()][coordinates.Y()].color = tetrisModel.currentPiece.Color()
 		}
 	}
 
@@ -162,6 +164,7 @@ func (tetrisModel *tetrisModel) addCurrentPieceToStack() {
 	if currentPiece != nil {
 		for _, coordinate := range currentPiece.Coordinates() {
 			tetrisModel.stackCells[coordinate.X()][coordinate.Y()].occupied = true
+			tetrisModel.stackCells[coordinate.X()][coordinate.Y()].color = currentPiece.Color()
 		}
 	}
 	tetrisModel.currentPiece = nil
@@ -175,8 +178,7 @@ func (tetrisModel *tetrisModel) periodicUpdate() {
 	}
 }
 
-var fgStyle = tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorRed)
-var bgStyle = tcell.StyleDefault.Foreground(tcell.ColorRed).Background(tcell.ColorWhite)
+var bgStyle = tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorWhite)
 
 func drawBoard(
 	tetrisModel *tetrisModel,
@@ -202,6 +204,8 @@ func drawBoard(
 		for y := 0; y < (common.BoardHeight); y += 1 {
 			var comb []rune
 			if tetrisModel.drawableCells[x/2][y].occupied {
+				fgStyle := tcell.StyleDefault.Foreground(tetrisModel.drawableCells[x/2][y].color).Background(tetrisModel.drawableCells[x/2][y].color)
+
 				s.SetContent(boardLeftX+x, boardTopY+y, ' ', comb, fgStyle)
 				s.SetContent(boardLeftX+x+1, boardTopY+y, ' ', comb, fgStyle)
 			} else {

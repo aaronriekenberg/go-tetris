@@ -1,8 +1,13 @@
 package pieces
 
-import "github.com/aaronriekenberg/go-tetris/common"
+import (
+	"github.com/aaronriekenberg/go-tetris/common"
+	"github.com/gdamore/tcell/v2"
+)
 
 type TetrisPiece interface {
+	Color() tcell.Color
+
 	CenterCoordinate() common.TetrisModelCoordinate
 
 	CloneWithNewCenterCoordinate(
@@ -32,6 +37,10 @@ func newSquarePiece(
 		centerCoordinate: centerCoordinate,
 		coordinates:      coordinates,
 	}
+}
+
+func (squarePiece squarePiece) Color() tcell.Color {
+	return tcell.ColorBlue
 }
 
 func (squarePiece squarePiece) CenterCoordinate() common.TetrisModelCoordinate {
