@@ -16,6 +16,8 @@ type TetrisPiece interface {
 		newCenterCoordinate common.TetrisModelCoordinate,
 	) TetrisPiece
 
+	CloneWithNextOrientation() TetrisPiece
+
 	Coordinates() []common.TetrisModelCoordinate
 }
 
@@ -66,6 +68,10 @@ func (squarePiece squarePiece) CloneWithNewCenterCoordinate(
 	return newSquarePiece(newCenterCoordinate)
 }
 
+func (squarePiece squarePiece) CloneWithNextOrientation() TetrisPiece {
+	return newSquarePiece(squarePiece.centerCoordinate)
+}
+
 func (squarePiece squarePiece) Coordinates() []common.TetrisModelCoordinate {
 	return squarePiece.coordinates
 }
@@ -104,6 +110,10 @@ func (linePiece linePiece) CloneWithNewCenterCoordinate(
 	newCenterCoordinate common.TetrisModelCoordinate,
 ) TetrisPiece {
 	return newLinePiece(newCenterCoordinate)
+}
+
+func (linePiece linePiece) CloneWithNextOrientation() TetrisPiece {
+	return newLinePiece(linePiece.centerCoordinate)
 }
 
 func (linePiece linePiece) Coordinates() []common.TetrisModelCoordinate {

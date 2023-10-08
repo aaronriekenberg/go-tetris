@@ -154,6 +154,17 @@ func (tetrisModel *tetrisModel) moveCurrentPieceRight() {
 	}
 }
 
+func (tetrisModel *tetrisModel) rotateCurrentPiece() {
+	currentPiece := tetrisModel.currentPiece
+	if currentPiece != nil {
+		updatedPiece := currentPiece.CloneWithNextOrientation()
+
+		if tetrisModel.isPieceLocationValid(updatedPiece) {
+			tetrisModel.currentPiece = updatedPiece
+		}
+	}
+}
+
 func (tetrisModel *tetrisModel) dropCurrentPiece() {
 	for tetrisModel.currentPiece != nil {
 		tetrisModel.moveCurrentPieceDown()
@@ -310,6 +321,9 @@ func main() {
 				drawBoard(tetrisModel, s)
 			case tcell.KeyRight:
 				tetrisModel.moveCurrentPieceRight()
+				drawBoard(tetrisModel, s)
+			case tcell.KeyUp:
+				tetrisModel.rotateCurrentPiece()
 				drawBoard(tetrisModel, s)
 			case tcell.KeyRune:
 				switch ev.Rune() {
