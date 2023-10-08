@@ -5,6 +5,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/aaronriekenberg/go-tetris/common"
+	"github.com/aaronriekenberg/go-tetris/pieces"
+
 	"github.com/gdamore/tcell/v2"
 	_ "github.com/gdamore/tcell/v2/encoding"
 )
@@ -23,70 +26,13 @@ import (
 // 	}
 // }
 
-const (
-	boardWidth  = 12
-	boardHeight = 16
-)
-
-// (0, 0) is topmost and leftmost cell
-type tetrisModelCoordinate struct {
-	x int
-	y int
-}
-
-func (tmc tetrisModelCoordinate) valid() bool {
-	return (tmc.x >= 0) && (tmc.x < boardWidth) && (tmc.y >= 0) && (tmc.y < boardHeight)
-}
-
-func (tmc tetrisModelCoordinate) addY(delta int) tetrisModelCoordinate {
-	tmc.y += delta
-	return tmc
-}
-
-func (tmc tetrisModelCoordinate) addX(delta int) tetrisModelCoordinate {
-	tmc.x += delta
-	return tmc
-}
-
-type tetrisPieceType int
-
-const (
-	squarePieceType tetrisPieceType = iota
-)
-
-type tetrisPiece struct {
-	pieceType        tetrisPieceType
-	centerCoordinate tetrisModelCoordinate
-}
-
-func (tetrisPiece tetrisPiece) cloneWithNewCenterCoordinate(
-	newCenterCoordinate tetrisModelCoordinate,
-) tetrisPiece {
-	tetrisPiece.centerCoordinate = newCenterCoordinate
-	return tetrisPiece
-}
-
-func (tetrisPiece tetrisPiece) coordinates() []tetrisModelCoordinate {
-	switch tetrisPiece.pieceType {
-	case squarePieceType:
-		return []tetrisModelCoordinate{
-			{x: tetrisPiece.centerCoordinate.x, y: tetrisPiece.centerCoordinate.y},
-			{x: tetrisPiece.centerCoordinate.x + 1, y: tetrisPiece.centerCoordinate.y},
-			{x: tetrisPiece.centerCoordinate.x, y: tetrisPiece.centerCoordinate.y + 1},
-			{x: tetrisPiece.centerCoordinate.x + 1, y: tetrisPiece.centerCoordinate.y + 1},
-		}
-	}
-
-	return nil
-}
-
 type tetrisModelCell struct {
 	occupied bool
 }
 
 type tetrisModel struct {
 	drawableCells [][]tetrisModelCell
-	currentPiece  *tetrisPiece
+	currentPiece  pieces.TetrisPiece
 	stackCells    [][]tetrisModelCell
 }
 
@@ -101,28 +47,28 @@ func newTetrisModel() *tetrisModel {
 }
 
 func (tetrisModel *tetrisModel) initializeStackCells() {
-	stackCells := make([][]tetrisModelCell, boardWidth)
+	stackCells := make([][]tetrisModelCell, common.BoardWidth)
 
-	for x := 0; x < boardWidth; x += 1 {
-		stackCells[x] = make([]tetrisModelCell, boardHeight)
+	for x := 0; x < common.BoardWidth; x += 1 {
+		stackCells[x] = make([]tetrisModelCell, common.BoardHeight)
 	}
 
 	tetrisModel.stackCells = stackCells
 }
 
 func (tetrisModel *tetrisModel) recomputeDrawableCells() {
-	drawableCells := make([][]tetrisModelCell, boardWidth)
+	drawableCells := make([][]tetrisModelCell, common.BoardWidth)
 
-	for x := 0; x < boardWidth; x += 1 {
-		drawableCells[x] = make([]tetrisModelCell, boardHeight)
-		for y := 0; y < boardHeight; y += 1 {
+	for x := 0; x < common.BoardWidth; x += 1 {
+		drawableCells[x] = make([]tetrisModelCell, common.BoardHeight)
+		for y := 0; y < common.BoardHeight; y += 1 {
 			drawableCells[x][y] = tetrisModel.stackCells[x][y]
 		}
 	}
 
 	if tetrisModel.currentPiece != nil {
-		for _, coordinates := range tetrisModel.currentPiece.coordinates() {
-			drawableCells[coordinates.x][coordinates.y].occupied = true
+		for _, coordinates := range tetrisModel.currentPiece.Coordinates() {
+			drawableCells[coordinates.X][coordinates.Y].occupied = true
 		}
 	}
 
@@ -130,12 +76,12 @@ func (tetrisModel *tetrisModel) recomputeDrawableCells() {
 }
 
 func (tetrisModel *tetrisModel) isPieceLocationValid(
-	tetrisPiece tetrisPiece,
+	tetrisPiece pieces.TetrisPiece,
 ) bool {
-	for _, coordinate := range tetrisPiece.coordinates() {
-		if !coordinate.valid() {
+	for _, coordinate := range tetrisPiece.Coordinates() {
+		if !coordinate.Valid() {
 			return false
-		} else if tetrisModel.stackCells[coordinate.x][coordinate.y].occupied {
+		} else if tetrisModel.stackCells[coordinate.X][coordinate.Y].occupied {
 			return false
 		}
 	}
@@ -143,37 +89,34 @@ func (tetrisModel *tetrisModel) isPieceLocationValid(
 }
 
 func (tetrisModel *tetrisModel) addNewPiece() {
-	centerCoordinate := tetrisModelCoordinate{
-		x: (boardWidth / 2) - 1,
-		y: 0,
+	centerCoordinate := common.TetrisModelCoordinate{
+		X: (common.BoardWidth / 2) - 1,
+		Y: 0,
 	}
 
-	newPiece := tetrisPiece{
-		pieceType:        squarePieceType,
-		centerCoordinate: centerCoordinate,
-	}
+	newPiece := pieces.CreateRandomPiece(centerCoordinate)
 
 	if !tetrisModel.isPieceLocationValid(newPiece) {
 		fmt.Printf("unable to add newPiece")
 		return
 	}
 
-	tetrisModel.currentPiece = &newPiece
+	tetrisModel.currentPiece = newPiece
 }
 
 func (tetrisModel *tetrisModel) moveCurrentPieceDown() {
 	currentPiece := tetrisModel.currentPiece
 	if currentPiece != nil {
-		centerCoordinate := currentPiece.centerCoordinate
+		centerCoordinate := currentPiece.CenterCoordinate()
 
-		newCenterCoordinate := centerCoordinate.addY(1)
+		newCenterCoordinate := centerCoordinate.AddY(1)
 
-		updatedPiece := currentPiece.cloneWithNewCenterCoordinate(newCenterCoordinate)
+		updatedPiece := currentPiece.CloneWithNewCenterCoordinate(newCenterCoordinate)
 
 		if !tetrisModel.isPieceLocationValid(updatedPiece) {
 			tetrisModel.addCurrentPieceToStack()
 		} else {
-			tetrisModel.currentPiece = &updatedPiece
+			tetrisModel.currentPiece = updatedPiece
 		}
 	}
 }
@@ -181,14 +124,14 @@ func (tetrisModel *tetrisModel) moveCurrentPieceDown() {
 func (tetrisModel *tetrisModel) moveCurrentPieceLeft() {
 	currentPiece := tetrisModel.currentPiece
 	if currentPiece != nil {
-		centerCoordinate := currentPiece.centerCoordinate
+		centerCoordinate := currentPiece.CenterCoordinate()
 
-		newCenterCoordinate := centerCoordinate.addX(-1)
+		newCenterCoordinate := centerCoordinate.AddX(-1)
 
-		updatedPiece := currentPiece.cloneWithNewCenterCoordinate(newCenterCoordinate)
+		updatedPiece := currentPiece.CloneWithNewCenterCoordinate(newCenterCoordinate)
 
 		if tetrisModel.isPieceLocationValid(updatedPiece) {
-			tetrisModel.currentPiece = &updatedPiece
+			tetrisModel.currentPiece = updatedPiece
 		}
 	}
 }
@@ -196,14 +139,14 @@ func (tetrisModel *tetrisModel) moveCurrentPieceLeft() {
 func (tetrisModel *tetrisModel) moveCurrentPieceRight() {
 	currentPiece := tetrisModel.currentPiece
 	if currentPiece != nil {
-		centerCoordinate := currentPiece.centerCoordinate
+		centerCoordinate := currentPiece.CenterCoordinate()
 
-		newCenterCoordinate := centerCoordinate.addX(1)
+		newCenterCoordinate := centerCoordinate.AddX(1)
 
-		updatedPiece := currentPiece.cloneWithNewCenterCoordinate(newCenterCoordinate)
+		updatedPiece := currentPiece.CloneWithNewCenterCoordinate(newCenterCoordinate)
 
 		if tetrisModel.isPieceLocationValid(updatedPiece) {
-			tetrisModel.currentPiece = &updatedPiece
+			tetrisModel.currentPiece = updatedPiece
 		}
 	}
 }
@@ -217,8 +160,8 @@ func (tetrisModel *tetrisModel) dropCurrentPiece() {
 func (tetrisModel *tetrisModel) addCurrentPieceToStack() {
 	currentPiece := tetrisModel.currentPiece
 	if currentPiece != nil {
-		for _, coordinate := range currentPiece.coordinates() {
-			tetrisModel.stackCells[coordinate.x][coordinate.y].occupied = true
+		for _, coordinate := range currentPiece.Coordinates() {
+			tetrisModel.stackCells[coordinate.X][coordinate.Y].occupied = true
 		}
 	}
 	tetrisModel.currentPiece = nil
@@ -247,16 +190,16 @@ func drawBoard(
 
 	// s.Clear()
 
-	if w < boardWidth || h < boardHeight {
+	if w < common.BoardWidth || h < common.BoardHeight {
 		s.Show()
 		return
 	}
 
-	boardLeftX := (w - (boardWidth * 2)) / 2
-	boardTopY := (h - boardHeight) / 2
+	boardLeftX := (w - (common.BoardWidth * 2)) / 2
+	boardTopY := (h - common.BoardHeight) / 2
 
-	for x := 0; x < (boardWidth * 2); x += 2 {
-		for y := 0; y < (boardHeight); y += 1 {
+	for x := 0; x < (common.BoardWidth * 2); x += 2 {
+		for y := 0; y < (common.BoardHeight); y += 1 {
 			var comb []rune
 			if tetrisModel.drawableCells[x/2][y].occupied {
 				s.SetContent(boardLeftX+x, boardTopY+y, ' ', comb, fgStyle)
