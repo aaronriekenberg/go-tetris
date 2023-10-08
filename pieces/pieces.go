@@ -27,10 +27,10 @@ func newSquarePiece(
 	centerCoordinate common.TetrisModelCoordinate,
 ) squarePiece {
 	coordinates := []common.TetrisModelCoordinate{
-		common.NewTetrisModelCoordinate(centerCoordinate.X(), centerCoordinate.Y()),
-		common.NewTetrisModelCoordinate(centerCoordinate.X()+1, centerCoordinate.Y()),
-		common.NewTetrisModelCoordinate(centerCoordinate.X(), centerCoordinate.Y()+1),
-		common.NewTetrisModelCoordinate(centerCoordinate.X()+1, centerCoordinate.Y()+1),
+		common.NewTetrisModelCoordinate(centerCoordinate.Row(), centerCoordinate.Column()),
+		common.NewTetrisModelCoordinate(centerCoordinate.Row()+1, centerCoordinate.Column()),
+		common.NewTetrisModelCoordinate(centerCoordinate.Row(), centerCoordinate.Column()+1),
+		common.NewTetrisModelCoordinate(centerCoordinate.Row()+1, centerCoordinate.Column()+1),
 	}
 
 	return squarePiece{

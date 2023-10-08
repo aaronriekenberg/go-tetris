@@ -48,29 +48,29 @@ func newTetrisModel() *tetrisModel {
 }
 
 func (tetrisModel *tetrisModel) initializeStackCells() {
-	stackCells := make([][]tetrisModelCell, common.BoardWidth)
+	stackCells := make([][]tetrisModelCell, common.BoardRows)
 
-	for x := 0; x < common.BoardWidth; x += 1 {
-		stackCells[x] = make([]tetrisModelCell, common.BoardHeight)
+	for row := 0; row < common.BoardRows; row += 1 {
+		stackCells[row] = make([]tetrisModelCell, common.BoardColumns)
 	}
 
 	tetrisModel.stackCells = stackCells
 }
 
 func (tetrisModel *tetrisModel) recomputeDrawableCells() {
-	drawableCells := make([][]tetrisModelCell, common.BoardWidth)
+	drawableCells := make([][]tetrisModelCell, common.BoardRows)
 
-	for x := 0; x < common.BoardWidth; x += 1 {
-		drawableCells[x] = make([]tetrisModelCell, common.BoardHeight)
-		for y := 0; y < common.BoardHeight; y += 1 {
-			drawableCells[x][y] = tetrisModel.stackCells[x][y]
+	for row := 0; row < common.BoardRows; row += 1 {
+		drawableCells[row] = make([]tetrisModelCell, common.BoardColumns)
+		for column := 0; column < common.BoardColumns; column += 1 {
+			drawableCells[row][column] = tetrisModel.stackCells[row][column]
 		}
 	}
 
 	if tetrisModel.currentPiece != nil {
 		for _, coordinates := range tetrisModel.currentPiece.Coordinates() {
-			drawableCells[coordinates.X()][coordinates.Y()].occupied = true
-			drawableCells[coordinates.X()][coordinates.Y()].color = tetrisModel.currentPiece.Color()
+			drawableCells[coordinates.Row()][coordinates.Column()].occupied = true
+			drawableCells[coordinates.Row()][coordinates.Column()].color = tetrisModel.currentPiece.Color()
 		}
 	}
 
@@ -83,7 +83,7 @@ func (tetrisModel *tetrisModel) isPieceLocationValid(
 	for _, coordinate := range tetrisPiece.Coordinates() {
 		if !coordinate.Valid() {
 			return false
-		} else if tetrisModel.stackCells[coordinate.X()][coordinate.Y()].occupied {
+		} else if tetrisModel.stackCells[coordinate.Row()][coordinate.Column()].occupied {
 			return false
 		}
 	}
@@ -92,8 +92,8 @@ func (tetrisModel *tetrisModel) isPieceLocationValid(
 
 func (tetrisModel *tetrisModel) addNewPiece() {
 	centerCoordinate := common.NewTetrisModelCoordinate(
-		(common.BoardWidth/2)-1,
 		0,
+		(common.BoardColumns/2)-1,
 	)
 
 	newPiece := pieces.CreateRandomPiece(centerCoordinate)
@@ -111,7 +111,7 @@ func (tetrisModel *tetrisModel) moveCurrentPieceDown() {
 	if currentPiece != nil {
 		centerCoordinate := currentPiece.CenterCoordinate()
 
-		newCenterCoordinate := centerCoordinate.AddY(1)
+		newCenterCoordinate := centerCoordinate.AddRows(1)
 
 		updatedPiece := currentPiece.CloneWithNewCenterCoordinate(newCenterCoordinate)
 
@@ -128,7 +128,7 @@ func (tetrisModel *tetrisModel) moveCurrentPieceLeft() {
 	if currentPiece != nil {
 		centerCoordinate := currentPiece.CenterCoordinate()
 
-		newCenterCoordinate := centerCoordinate.AddX(-1)
+		newCenterCoordinate := centerCoordinate.AddColumns(-1)
 
 		updatedPiece := currentPiece.CloneWithNewCenterCoordinate(newCenterCoordinate)
 
@@ -143,7 +143,7 @@ func (tetrisModel *tetrisModel) moveCurrentPieceRight() {
 	if currentPiece != nil {
 		centerCoordinate := currentPiece.CenterCoordinate()
 
-		newCenterCoordinate := centerCoordinate.AddX(1)
+		newCenterCoordinate := centerCoordinate.AddColumns(1)
 
 		updatedPiece := currentPiece.CloneWithNewCenterCoordinate(newCenterCoordinate)
 
@@ -163,12 +163,31 @@ func (tetrisModel *tetrisModel) addCurrentPieceToStack() {
 	currentPiece := tetrisModel.currentPiece
 	if currentPiece != nil {
 		for _, coordinate := range currentPiece.Coordinates() {
-			tetrisModel.stackCells[coordinate.X()][coordinate.Y()].occupied = true
-			tetrisModel.stackCells[coordinate.X()][coordinate.Y()].color = currentPiece.Color()
+			tetrisModel.stackCells[coordinate.Row()][coordinate.Column()].occupied = true
+			tetrisModel.stackCells[coordinate.Row()][coordinate.Column()].color = currentPiece.Color()
 		}
 	}
 	tetrisModel.currentPiece = nil
 }
+
+// func (tetrisModel *tetrisModel) handleFilledStackRows() {
+// 	row := common.BoardRows
+
+// 	for row >= 0 {
+// 		rowIsFull := true
+// 		for _, cell := range tetrisModel.stackCells[row] {
+// 			if !cell.occupied {
+// 				rowIsFull = false
+// 				break
+// 			}
+// 		}
+// 		if rowIsFull {
+// 			tetrisModel.stackCells = slices.Delete(tetrisModel.stackCells, row, row+1)
+// 		} else {
+
+// 		}
+// 	}
+// }
 
 func (tetrisModel *tetrisModel) periodicUpdate() {
 	if tetrisModel.currentPiece == nil {
@@ -192,25 +211,29 @@ func drawBoard(
 
 	// s.Clear()
 
-	if w < common.BoardWidth || h < common.BoardHeight {
+	if w < (common.BoardColumns*2) || h < common.BoardRows {
 		s.Show()
 		return
 	}
 
-	boardLeftX := (w - (common.BoardWidth * 2)) / 2
-	boardTopY := (h - common.BoardHeight) / 2
+	boardLeftX := (w - (common.BoardColumns * 2)) / 2
+	boardTopY := (h - common.BoardRows) / 2
 
-	for x := 0; x < (common.BoardWidth * 2); x += 2 {
-		for y := 0; y < (common.BoardHeight); y += 1 {
+	for column := 0; column < (common.BoardColumns * 2); column += 2 {
+		for row := 0; row < (common.BoardRows); row += 1 {
 			var comb []rune
-			if tetrisModel.drawableCells[x/2][y].occupied {
-				fgStyle := tcell.StyleDefault.Foreground(tetrisModel.drawableCells[x/2][y].color).Background(tetrisModel.drawableCells[x/2][y].color)
+			modelRow := row
+			modelColumn := (column / 2)
+			if tetrisModel.drawableCells[modelRow][modelColumn].occupied {
+				fgStyle := tcell.StyleDefault.
+					Foreground(tetrisModel.drawableCells[modelRow][modelColumn].color).
+					Background(tetrisModel.drawableCells[modelRow][modelColumn].color)
 
-				s.SetContent(boardLeftX+x, boardTopY+y, ' ', comb, fgStyle)
-				s.SetContent(boardLeftX+x+1, boardTopY+y, ' ', comb, fgStyle)
+				s.SetContent(boardLeftX+column, boardTopY+row, ' ', comb, fgStyle)
+				s.SetContent(boardLeftX+column+1, boardTopY+row, ' ', comb, fgStyle)
 			} else {
-				s.SetContent(boardLeftX+x, boardTopY+y, ' ', comb, bgStyle)
-				s.SetContent(boardLeftX+x+1, boardTopY+y, ' ', comb, bgStyle)
+				s.SetContent(boardLeftX+column, boardTopY+row, ' ', comb, bgStyle)
+				s.SetContent(boardLeftX+column+1, boardTopY+row, ' ', comb, bgStyle)
 			}
 		}
 	}

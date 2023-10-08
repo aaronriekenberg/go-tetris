@@ -1,43 +1,43 @@
 package common
 
 const (
-	BoardWidth  = 12
-	BoardHeight = 16
+	BoardRows    = 16
+	BoardColumns = 12
 )
 
 // (0, 0) is topmost and leftmost cell
 type TetrisModelCoordinate struct {
-	x int
-	y int
+	row    int
+	column int
 }
 
 func NewTetrisModelCoordinate(
-	x, y int,
+	row, column int,
 ) TetrisModelCoordinate {
 	return TetrisModelCoordinate{
-		x: x,
-		y: y,
+		row:    row,
+		column: column,
 	}
 }
 
 func (tmc TetrisModelCoordinate) Valid() bool {
-	return (tmc.x >= 0) && (tmc.x < BoardWidth) && (tmc.y >= 0) && (tmc.y < BoardHeight)
+	return (tmc.row >= 0) && (tmc.row < BoardRows) && (tmc.column >= 0) && (tmc.column < BoardColumns)
 }
 
-func (tmc TetrisModelCoordinate) AddY(delta int) TetrisModelCoordinate {
-	tmc.y += delta
+func (tmc TetrisModelCoordinate) AddRows(delta int) TetrisModelCoordinate {
+	tmc.row += delta
 	return tmc
 }
 
-func (tmc TetrisModelCoordinate) AddX(delta int) TetrisModelCoordinate {
-	tmc.x += delta
+func (tmc TetrisModelCoordinate) AddColumns(delta int) TetrisModelCoordinate {
+	tmc.column += delta
 	return tmc
 }
 
-func (tmc TetrisModelCoordinate) X() int {
-	return tmc.x
+func (tmc TetrisModelCoordinate) Row() int {
+	return tmc.row
 }
 
-func (tmc TetrisModelCoordinate) Y() int {
-	return tmc.y
+func (tmc TetrisModelCoordinate) Column() int {
+	return tmc.column
 }
