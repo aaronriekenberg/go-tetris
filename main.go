@@ -7,31 +7,20 @@ import (
 
 	"github.com/gdamore/tcell/v2"
 	_ "github.com/gdamore/tcell/v2/encoding"
-
-	"github.com/mattn/go-runewidth"
 )
 
-func emitStr(s tcell.Screen, x, y int, style tcell.Style, str string) {
-	for _, c := range str {
-		var comb []rune
-		w := runewidth.RuneWidth(c)
-		if w == 0 {
-			comb = []rune{c}
-			c = ' '
-			w = 1
-		}
-		s.SetContent(x, y, c, comb, style)
-		x += w
-	}
-}
-
-// func displayHelloWorld(s tcell.Screen) {
-// 	w, h := s.Size()
-// 	s.Clear()
-// 	style := tcell.StyleDefault.Foreground(tcell.ColorBlue.TrueColor()).Background(tcell.ColorWhite)
-// 	emitStr(s, w/2-12, h/2, style, fmt.Sprintf("width = %03v height = %03v", w, h))
-// 	emitStr(s, w/2-12, h/2+1, style, "                            ")
-// 	s.Show()
+// func emitStr(s tcell.Screen, x, y int, style tcell.Style, str string) {
+// 	for _, c := range str {
+// 		var comb []rune
+// 		w := runewidth.RuneWidth(c)
+// 		if w == 0 {
+// 			comb = []rune{c}
+// 			c = ' '
+// 			w = 1
+// 		}
+// 		s.SetContent(x, y, c, comb, style)
+// 		x += w
+// 	}
 // }
 
 const (
@@ -281,59 +270,7 @@ func drawBoard(
 
 	s.Show()
 
-	// s.Sync()
-
-	// delta := time.Since(startTime)
-
-	// fmt.Printf("delta = %v", delta)
-
 }
-
-// func makebox(s tcell.Screen) {
-// 	w, h := s.Size()
-
-// 	s.Clear()
-
-// 	// if w < 300 || h < 550 {
-// 	// 	s.Show()
-// 	// 	return
-// 	// }
-// 	st := tcell.StyleDefault
-// 	gl := 'A'
-
-// 	s.SetCell((w-width)/2, (h-height)/2, st, gl)
-
-// 	// glyphs := []rune{'@', '#', '&', '*', '=', '%', 'Z', 'A'}
-
-// 	// lx := rand.Int() % w
-// 	// ly := rand.Int() % h
-// 	// lw := rand.Int() % (w - lx)
-// 	// lh := rand.Int() % (h - ly)
-// 	// st := tcell.StyleDefault
-// 	// gl := ' '
-// 	// if s.Colors() > 256 {
-// 	// 	rgb := tcell.NewHexColor(int32(rand.Int() & 0xffffff))
-// 	// 	st = st.Background(rgb)
-// 	// } else if s.Colors() > 1 {
-// 	// 	st = st.Background(tcell.Color(rand.Int()%s.Colors()) | tcell.ColorValid)
-// 	// } else {
-// 	// 	st = st.Reverse(rand.Int()%2 == 0)
-// 	// 	gl = glyphs[rand.Int()%len(glyphs)]
-// 	// }
-// 	rgb := tcell.NewHexColor(int32(rand.Int() & 0xffffff))
-// 	st = st.Background(rgb)
-
-// 	lx := rand.Int() % w
-// 	ly := rand.Int() % h
-// 	lw := rand.Int() % (w - lx)
-// 	lh := rand.Int() % (h - ly)
-// 	for row := 0; row < lh; row++ {
-// 		for col := 0; col < lw; col++ {
-// 			s.SetCell(lx+col, ly+row, st, gl)
-// 		}
-// 	}
-// 	s.Show()
-// }
 
 func main() {
 	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
@@ -354,29 +291,14 @@ func main() {
 
 	tetrisModel := newTetrisModel()
 
-	// eventChannel := make(chan tcell.Event, 1000)
-	// quitChannel := make(chan struct{}, 10)
-	// go s.ChannelEvents(eventChannel, quitChannel)
-
 	periodicUpdateTicker := time.NewTicker(500 * time.Millisecond)
 	go func() {
 		for {
 			<-periodicUpdateTicker.C
 
-			// fmt.Printf("calling postEvent")
 			s.PostEvent(tcell.NewEventInterrupt(periodicUpdateInterruptCustomEvent{}))
 		}
 	}()
-
-	// redrawTicker := time.NewTicker(50 * time.Millisecond)
-	// go func() {
-	// 	for {
-	// 		<-redrawTicker.C
-
-	// 		// fmt.Printf("calling postEvent")
-	// 		s.PostEvent(tcell.NewEventInterrupt(redrawInterruptCustomEvent{}))
-	// 	}
-	// }()
 
 	done := false
 
@@ -396,19 +318,13 @@ func main() {
 	defer quit()
 
 	for !done {
-		// select {
-		// case ev := <-eventChannel:
 		ev := s.PollEvent()
-		// fmt.Printf("got event")
 		switch ev := ev.(type) {
 		case *tcell.EventInterrupt:
 			switch ev.Data().(type) {
 			case periodicUpdateInterruptCustomEvent:
 				tetrisModel.periodicUpdate()
 				drawBoard(tetrisModel, s)
-
-				// case redrawInterruptCustomEvent:
-				// 	drawBoard(tetrisModel, s)
 			}
 		case *tcell.EventKey:
 			switch ev.Key() {
@@ -430,17 +346,12 @@ func main() {
 				}
 			}
 		case *tcell.EventResize:
-			fmt.Printf("EvetnResize")
 			s.Clear()
 			s.Sync()
 			drawBoard(tetrisModel, s)
 		}
 	}
 
-	fmt.Printf("end main")
-
 }
 
 type periodicUpdateInterruptCustomEvent struct{}
-
-// type redrawInterruptCustomEvent struct{}
