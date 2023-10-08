@@ -1,6 +1,8 @@
 package pieces
 
 import (
+	"math/rand"
+
 	"github.com/aaronriekenberg/go-tetris/common"
 	"github.com/gdamore/tcell/v2"
 )
@@ -17,6 +19,17 @@ type TetrisPiece interface {
 	Coordinates() []common.TetrisModelCoordinate
 }
 
+var pieceConstructors = []func(centerCoordinate common.TetrisModelCoordinate) TetrisPiece{
+	newSquarePiece,
+	newLinePiece,
+}
+
+func CreateRandomPiece(
+	centerCoordinate common.TetrisModelCoordinate,
+) TetrisPiece {
+	return pieceConstructors[rand.Intn(len(pieceConstructors))](centerCoordinate)
+}
+
 type squarePiece struct {
 	centerCoordinate common.TetrisModelCoordinate
 
@@ -25,7 +38,7 @@ type squarePiece struct {
 
 func newSquarePiece(
 	centerCoordinate common.TetrisModelCoordinate,
-) squarePiece {
+) TetrisPiece {
 	coordinates := []common.TetrisModelCoordinate{
 		common.NewTetrisModelCoordinate(centerCoordinate.Row(), centerCoordinate.Column()),
 		common.NewTetrisModelCoordinate(centerCoordinate.Row()+1, centerCoordinate.Column()),
@@ -40,7 +53,7 @@ func newSquarePiece(
 }
 
 func (squarePiece squarePiece) Color() tcell.Color {
-	return tcell.ColorBlue
+	return tcell.ColorGreen
 }
 
 func (squarePiece squarePiece) CenterCoordinate() common.TetrisModelCoordinate {
@@ -57,8 +70,42 @@ func (squarePiece squarePiece) Coordinates() []common.TetrisModelCoordinate {
 	return squarePiece.coordinates
 }
 
-func CreateRandomPiece(
+type linePiece struct {
+	centerCoordinate common.TetrisModelCoordinate
+
+	coordinates []common.TetrisModelCoordinate
+}
+
+func newLinePiece(
 	centerCoordinate common.TetrisModelCoordinate,
 ) TetrisPiece {
-	return newSquarePiece(centerCoordinate)
+	coordinates := []common.TetrisModelCoordinate{
+		common.NewTetrisModelCoordinate(centerCoordinate.Row(), centerCoordinate.Column()),
+		common.NewTetrisModelCoordinate(centerCoordinate.Row()+1, centerCoordinate.Column()),
+		common.NewTetrisModelCoordinate(centerCoordinate.Row()+2, centerCoordinate.Column()),
+		common.NewTetrisModelCoordinate(centerCoordinate.Row()+3, centerCoordinate.Column()),
+	}
+
+	return linePiece{
+		centerCoordinate: centerCoordinate,
+		coordinates:      coordinates,
+	}
+}
+
+func (linePiece linePiece) Color() tcell.Color {
+	return tcell.ColorRed
+}
+
+func (linePiece linePiece) CenterCoordinate() common.TetrisModelCoordinate {
+	return linePiece.centerCoordinate
+}
+
+func (linePiece linePiece) CloneWithNewCenterCoordinate(
+	newCenterCoordinate common.TetrisModelCoordinate,
+) TetrisPiece {
+	return newLinePiece(newCenterCoordinate)
+}
+
+func (linePiece linePiece) Coordinates() []common.TetrisModelCoordinate {
+	return linePiece.coordinates
 }
