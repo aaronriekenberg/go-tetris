@@ -82,7 +82,7 @@ func runEventLoop(
 				}
 			}
 		case *tcell.EventResize:
-
+			view.HandleResizeEvent()
 		}
 	}
 
