@@ -24,6 +24,7 @@ type TetrisPiece interface {
 var pieceConstructors = []func(centerCoordinate common.TetrisModelCoordinate) TetrisPiece{
 	newSquarePieceDefaultOrientation,
 	newLinePieceDefaultOrientation,
+	newTPieceDefaultOrientation,
 }
 
 func CreateRandomPiece(
