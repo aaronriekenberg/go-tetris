@@ -30,6 +30,7 @@ var pieceConstructors = []pieceConstructor{
 	newLeftZPieceDefaultOrientation,
 	newRigthZPieceDefaultOrientation,
 	newLeftLPieceDefaultOrientation,
+	newRightLPieceDefaultOrientation,
 }
 
 func CreateRandomPiece(
