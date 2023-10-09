@@ -7,7 +7,6 @@ import (
 	"github.com/aaronriekenberg/go-tetris/view"
 
 	"github.com/gdamore/tcell/v2"
-	_ "github.com/gdamore/tcell/v2/encoding"
 )
 
 func Run() {

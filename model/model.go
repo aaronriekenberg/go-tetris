@@ -28,12 +28,13 @@ func (tmc tetrisModelCell) Color() tcell.Color {
 	return tmc.color
 }
 
-type DrawableCellsModel interface {
+type DrawableInfoModel interface {
 	DrawableCells() [][]TetrisModelCell
+	Lines() int
 }
 
 type TetrisModel interface {
-	DrawableCellsModel
+	DrawableInfoModel
 	MoveCurrentPieceDown()
 	MoveCurrentPieceLeft()
 	MoveCurrentPieceRight()
@@ -46,6 +47,7 @@ type tetrisModel struct {
 	drawableCellsCache [][]TetrisModelCell
 	currentPiece       pieces.TetrisPiece
 	stackCells         [][]tetrisModelCell
+	lines              int
 }
 
 func NewTetrisModel() TetrisModel {
@@ -93,6 +95,10 @@ func (tetrisModel *tetrisModel) DrawableCells() [][]TetrisModelCell {
 	tetrisModel.drawableCellsCache = drawableCellsCache
 
 	return tetrisModel.drawableCellsCache
+}
+
+func (tetrisModel *tetrisModel) Lines() int {
+	return tetrisModel.lines
 }
 
 func (tetrisModel *tetrisModel) invalidateDrawableCellsCache() {
@@ -227,7 +233,7 @@ func (tetrisModel *tetrisModel) handleFilledStackRows() {
 		if rowIsFull {
 			tetrisModel.stackCells = slices.Delete(tetrisModel.stackCells, row, row+1)
 			tetrisModel.stackCells = slices.Insert(tetrisModel.stackCells, 0, make([]tetrisModelCell, common.BoardColumns))
-			// numLines += 1
+			tetrisModel.lines += 1
 		} else {
 			row -= 1
 		}

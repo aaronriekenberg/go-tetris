@@ -6,16 +6,20 @@ import (
 
 	"github.com/aaronriekenberg/go-tetris/common"
 	"github.com/aaronriekenberg/go-tetris/model"
+
 	"github.com/gdamore/tcell/v2"
+	_ "github.com/gdamore/tcell/v2/encoding"
+
+	"github.com/mattn/go-runewidth"
 )
 
 type View struct {
-	screen             tcell.Screen
-	drawableCellsModel model.DrawableCellsModel
+	screen            tcell.Screen
+	drawableInfoModel model.DrawableInfoModel
 }
 
 func NewView(
-	drawableCellsModel model.DrawableCellsModel,
+	drawableInfoModel model.DrawableInfoModel,
 ) *View {
 	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
 	screen, e := tcell.NewScreen()
@@ -34,8 +38,8 @@ func NewView(
 	screen.Clear()
 
 	return &View{
-		screen:             screen,
-		drawableCellsModel: drawableCellsModel,
+		screen:            screen,
+		drawableInfoModel: drawableInfoModel,
 	}
 }
 
@@ -43,7 +47,7 @@ var bgStyle = tcell.StyleDefault.Foreground(tcell.ColorBlack).Background(tcell.C
 
 func (view *View) Draw() {
 
-	drawableCells := view.drawableCellsModel.DrawableCells()
+	drawableCells := view.drawableInfoModel.DrawableCells()
 
 	w, h := view.screen.Size()
 
@@ -53,8 +57,8 @@ func (view *View) Draw() {
 		view.screen.Show()
 		return
 	}
-
-	boardLeftX := (w - (common.BoardColumns * 2)) / 2
+	boardWidth := common.BoardColumns * 2
+	boardLeftX := (w - boardWidth) / 2
 	boardTopY := (h - common.BoardRows) / 2
 
 	for viewColumn := 0; viewColumn < (common.BoardColumns * 2); viewColumn += 2 {
@@ -78,6 +82,16 @@ func (view *View) Draw() {
 		}
 	}
 
+	linesStyle := tcell.StyleDefault.Foreground(tcell.ColorBlack).Background(tcell.ColorWhite)
+
+	emitStr(
+		view.screen,
+		boardLeftX+(boardWidth/2)-5,
+		boardTopY+common.BoardRows+1,
+		linesStyle,
+		fmt.Sprintf("Lines: % 3v", view.drawableInfoModel.Lines()),
+	)
+
 	view.screen.Show()
 }
 
@@ -95,16 +109,16 @@ func (view *View) Screen() tcell.Screen {
 	return view.screen
 }
 
-// func emitStr(s tcell.Screen, x, y int, style tcell.Style, str string) {
-// 	for _, c := range str {
-// 		var comb []rune
-// 		w := runewidth.RuneWidth(c)
-// 		if w == 0 {
-// 			comb = []rune{c}
-// 			c = ' '
-// 			w = 1
-// 		}
-// 		s.SetContent(x, y, c, comb, style)
-// 		x += w
-// 	}
-// }
+func emitStr(s tcell.Screen, x, y int, style tcell.Style, str string) {
+	for _, c := range str {
+		var comb []rune
+		w := runewidth.RuneWidth(c)
+		if w == 0 {
+			comb = []rune{c}
+			c = ' '
+			w = 1
+		}
+		s.SetContent(x, y, c, comb, style)
+		x += w
+	}
+}
