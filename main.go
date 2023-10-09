@@ -213,7 +213,7 @@ func (tetrisModel *tetrisModel) periodicUpdate() {
 	}
 }
 
-var bgStyle = tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorWhite)
+var bgStyle = tcell.StyleDefault.Foreground(tcell.ColorBlack).Background(tcell.ColorBlack)
 
 func drawBoard(
 	tetrisModel *tetrisModel,
@@ -235,21 +235,23 @@ func drawBoard(
 	boardLeftX := (w - (common.BoardColumns * 2)) / 2
 	boardTopY := (h - common.BoardRows) / 2
 
-	for column := 0; column < (common.BoardColumns * 2); column += 2 {
-		for row := 0; row < (common.BoardRows); row += 1 {
+	for viewColumn := 0; viewColumn < (common.BoardColumns * 2); viewColumn += 2 {
+		for viewRow := 0; viewRow < (common.BoardRows); viewRow += 1 {
 			var comb []rune
-			modelRow := row
-			modelColumn := (column / 2)
-			if tetrisModel.drawableCells[modelRow][modelColumn].occupied {
-				fgStyle := tcell.StyleDefault.
-					Foreground(tetrisModel.drawableCells[modelRow][modelColumn].color).
-					Background(tetrisModel.drawableCells[modelRow][modelColumn].color)
+			modelRow := viewRow
+			modelColumn := (viewColumn / 2)
 
-				s.SetContent(boardLeftX+column, boardTopY+row, ' ', comb, fgStyle)
-				s.SetContent(boardLeftX+column+1, boardTopY+row, ' ', comb, fgStyle)
+			modelCell := &tetrisModel.drawableCells[modelRow][modelColumn]
+			if modelCell.occupied {
+				fgStyle := tcell.StyleDefault.
+					Foreground(modelCell.color).
+					Background(modelCell.color)
+
+				s.SetContent(boardLeftX+viewColumn, boardTopY+viewRow, ' ', comb, fgStyle)
+				s.SetContent(boardLeftX+viewColumn+1, boardTopY+viewRow, ' ', comb, fgStyle)
 			} else {
-				s.SetContent(boardLeftX+column, boardTopY+row, ' ', comb, bgStyle)
-				s.SetContent(boardLeftX+column+1, boardTopY+row, ' ', comb, bgStyle)
+				s.SetContent(boardLeftX+viewColumn, boardTopY+viewRow, ' ', comb, bgStyle)
+				s.SetContent(boardLeftX+viewColumn+1, boardTopY+viewRow, ' ', comb, bgStyle)
 			}
 		}
 	}
@@ -271,8 +273,8 @@ func main() {
 	}
 
 	s.SetStyle(tcell.StyleDefault.
-		Foreground(tcell.ColorWhite).
-		Background(tcell.ColorBlack))
+		Foreground(tcell.ColorBlack).
+		Background(tcell.ColorWhite))
 	s.Clear()
 
 	tetrisModel := newTetrisModel()
