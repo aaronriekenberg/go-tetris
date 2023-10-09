@@ -82,14 +82,25 @@ func (view *View) Draw() {
 		}
 	}
 
-	linesStyle := tcell.StyleDefault.Foreground(tcell.ColorBlack).Background(tcell.ColorWhite)
+	textStyle := tcell.StyleDefault.Foreground(tcell.ColorBlack).Background(tcell.ColorWhite)
 
 	view.emitStr(
 		boardLeftX+(boardWidth/2)-5,
 		boardTopY+common.BoardRows+1,
-		linesStyle,
+		textStyle,
 		fmt.Sprintf("Lines: % 3v", view.drawableInfoModel.Lines()),
 	)
+
+	if view.drawableInfoModel.GameOver() {
+		textStyle = tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorBlack)
+
+		view.emitStr(
+			boardLeftX+(boardWidth/2)-4,
+			boardTopY+common.BoardRows+3,
+			textStyle,
+			"GAME OVER",
+		)
+	}
 
 	view.screen.Show()
 }

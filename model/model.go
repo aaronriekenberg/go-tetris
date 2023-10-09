@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	"slices"
 
 	"github.com/aaronriekenberg/go-tetris/common"
@@ -31,6 +30,7 @@ func (tmc tetrisModelCell) Color() tcell.Color {
 type DrawableInfoModel interface {
 	DrawableCells() [][]TetrisModelCell
 	Lines() int
+	GameOver() bool
 }
 
 type TetrisModel interface {
@@ -48,6 +48,7 @@ type tetrisModel struct {
 	currentPiece       pieces.TetrisPiece
 	stackCells         [][]tetrisModelCell
 	lines              int
+	gameOver           bool
 }
 
 func NewTetrisModel() TetrisModel {
@@ -101,6 +102,10 @@ func (tetrisModel *tetrisModel) Lines() int {
 	return tetrisModel.lines
 }
 
+func (tetrisModel *tetrisModel) GameOver() bool {
+	return tetrisModel.gameOver
+}
+
 func (tetrisModel *tetrisModel) invalidateDrawableCellsCache() {
 	tetrisModel.drawableCellsCache = nil
 }
@@ -127,7 +132,7 @@ func (tetrisModel *tetrisModel) addNewPiece() {
 	newPiece := pieces.CreateRandomPiece(centerCoordinate)
 
 	if !tetrisModel.isPieceLocationValid(newPiece) {
-		fmt.Printf("unable to add newPiece")
+		tetrisModel.gameOver = true
 		return
 	}
 
@@ -135,6 +140,10 @@ func (tetrisModel *tetrisModel) addNewPiece() {
 }
 
 func (tetrisModel *tetrisModel) MoveCurrentPieceDown() {
+	if tetrisModel.gameOver {
+		return
+	}
+
 	currentPiece := tetrisModel.currentPiece
 	if currentPiece != nil {
 		centerCoordinate := currentPiece.CenterCoordinate()
@@ -154,6 +163,10 @@ func (tetrisModel *tetrisModel) MoveCurrentPieceDown() {
 }
 
 func (tetrisModel *tetrisModel) MoveCurrentPieceLeft() {
+	if tetrisModel.gameOver {
+		return
+	}
+
 	currentPiece := tetrisModel.currentPiece
 	if currentPiece != nil {
 		centerCoordinate := currentPiece.CenterCoordinate()
@@ -171,6 +184,10 @@ func (tetrisModel *tetrisModel) MoveCurrentPieceLeft() {
 }
 
 func (tetrisModel *tetrisModel) MoveCurrentPieceRight() {
+	if tetrisModel.gameOver {
+		return
+	}
+
 	currentPiece := tetrisModel.currentPiece
 	if currentPiece != nil {
 		centerCoordinate := currentPiece.CenterCoordinate()
@@ -188,6 +205,10 @@ func (tetrisModel *tetrisModel) MoveCurrentPieceRight() {
 }
 
 func (tetrisModel *tetrisModel) RotateCurrentPiece() {
+	if tetrisModel.gameOver {
+		return
+	}
+
 	currentPiece := tetrisModel.currentPiece
 	if currentPiece != nil {
 		updatedPiece := currentPiece.CloneWithNextOrientation()
@@ -201,6 +222,10 @@ func (tetrisModel *tetrisModel) RotateCurrentPiece() {
 }
 
 func (tetrisModel *tetrisModel) DropCurrentPiece() {
+	if tetrisModel.gameOver {
+		return
+	}
+
 	for tetrisModel.currentPiece != nil {
 		tetrisModel.MoveCurrentPieceDown()
 	}
@@ -241,6 +266,10 @@ func (tetrisModel *tetrisModel) handleFilledStackRows() {
 }
 
 func (tetrisModel *tetrisModel) PeriodicUpdate() {
+	if tetrisModel.gameOver {
+		return
+	}
+
 	if tetrisModel.currentPiece == nil {
 		tetrisModel.addNewPiece()
 	} else {
