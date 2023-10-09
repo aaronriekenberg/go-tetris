@@ -13,34 +13,33 @@ type leftZPiece struct {
 	createOrientationFuncs []createOrientationFunc
 }
 
+var leftZPieceOrientationFuncs = []createOrientationFunc{
+	func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
+		return []common.TetrisModelCoordinate{
+			centerCoordinate,
+			centerCoordinate.AddColumns(-1),
+			centerCoordinate.AddRows(1),
+			centerCoordinate.AddRowsColumns(1, 1),
+		}
+	},
+	func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
+		return []common.TetrisModelCoordinate{
+			centerCoordinate,
+			centerCoordinate.AddRows(1),
+			centerCoordinate.AddColumns(1),
+			centerCoordinate.AddRowsColumns(-1, 1),
+		}
+	},
+}
+
 func newLeftZPiece(
 	centerCoordinate common.TetrisModelCoordinate,
 	orientation int,
 ) TetrisPiece {
-
-	createOrientationFuncs := []createOrientationFunc{
-		func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
-			return []common.TetrisModelCoordinate{
-				centerCoordinate,
-				centerCoordinate.AddColumns(-1),
-				centerCoordinate.AddRows(1),
-				centerCoordinate.AddRowsColumns(1, 1),
-			}
-		},
-		func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
-			return []common.TetrisModelCoordinate{
-				centerCoordinate,
-				centerCoordinate.AddRows(1),
-				centerCoordinate.AddColumns(1),
-				centerCoordinate.AddRowsColumns(-1, 1),
-			}
-		},
-	}
-
 	return leftZPiece{
 		centerCoordinate:       centerCoordinate,
 		orientation:            orientation,
-		createOrientationFuncs: createOrientationFuncs,
+		createOrientationFuncs: leftZPieceOrientationFuncs,
 	}
 }
 

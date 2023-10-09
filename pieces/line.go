@@ -13,50 +13,49 @@ type linePiece struct {
 	createOrientationFuncs []createOrientationFunc
 }
 
+var linePieceOrientationFuncs = []createOrientationFunc{
+	func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
+		return []common.TetrisModelCoordinate{
+			centerCoordinate,
+			centerCoordinate.AddRows(1),
+			centerCoordinate.AddRows(2),
+			centerCoordinate.AddRows(3),
+		}
+	},
+	func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
+		return []common.TetrisModelCoordinate{
+			centerCoordinate,
+			centerCoordinate.AddColumns(1),
+			centerCoordinate.AddColumns(2),
+			centerCoordinate.AddColumns(3),
+		}
+	},
+	func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
+		return []common.TetrisModelCoordinate{
+			centerCoordinate,
+			centerCoordinate.AddRows(-1),
+			centerCoordinate.AddRows(-2),
+			centerCoordinate.AddRows(-3),
+		}
+	},
+	func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
+		return []common.TetrisModelCoordinate{
+			centerCoordinate,
+			centerCoordinate.AddColumns(-1),
+			centerCoordinate.AddColumns(-2),
+			centerCoordinate.AddColumns(-3),
+		}
+	},
+}
+
 func newLinePiece(
 	centerCoordinate common.TetrisModelCoordinate,
 	orientation int,
 ) TetrisPiece {
-
-	createOrientationFuncs := []createOrientationFunc{
-		func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
-			return []common.TetrisModelCoordinate{
-				centerCoordinate,
-				centerCoordinate.AddRows(1),
-				centerCoordinate.AddRows(2),
-				centerCoordinate.AddRows(3),
-			}
-		},
-		func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
-			return []common.TetrisModelCoordinate{
-				centerCoordinate,
-				centerCoordinate.AddColumns(1),
-				centerCoordinate.AddColumns(2),
-				centerCoordinate.AddColumns(3),
-			}
-		},
-		func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
-			return []common.TetrisModelCoordinate{
-				centerCoordinate,
-				centerCoordinate.AddRows(-1),
-				centerCoordinate.AddRows(-2),
-				centerCoordinate.AddRows(-3),
-			}
-		},
-		func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
-			return []common.TetrisModelCoordinate{
-				centerCoordinate,
-				centerCoordinate.AddColumns(-1),
-				centerCoordinate.AddColumns(-2),
-				centerCoordinate.AddColumns(-3),
-			}
-		},
-	}
-
 	return linePiece{
 		centerCoordinate:       centerCoordinate,
 		orientation:            orientation,
-		createOrientationFuncs: createOrientationFuncs,
+		createOrientationFuncs: linePieceOrientationFuncs,
 	}
 }
 

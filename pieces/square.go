@@ -13,26 +13,25 @@ type squarePiece struct {
 	createOrientationFuncs []createOrientationFunc
 }
 
+var squarePieceOrientationFuncs = []createOrientationFunc{
+	func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
+		return []common.TetrisModelCoordinate{
+			centerCoordinate,
+			centerCoordinate.AddRows(1),
+			centerCoordinate.AddColumns(1),
+			centerCoordinate.AddRowsColumns(1, 1),
+		}
+	},
+}
+
 func newSquarePiece(
 	centerCoordinate common.TetrisModelCoordinate,
 	orientation int,
 ) TetrisPiece {
-
-	createOrientationFuncs := []createOrientationFunc{
-		func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
-			return []common.TetrisModelCoordinate{
-				centerCoordinate,
-				centerCoordinate.AddRows(1),
-				centerCoordinate.AddColumns(1),
-				centerCoordinate.AddRowsColumns(1, 1),
-			}
-		},
-	}
-
 	return squarePiece{
 		centerCoordinate:       centerCoordinate,
 		orientation:            orientation,
-		createOrientationFuncs: createOrientationFuncs,
+		createOrientationFuncs: squarePieceOrientationFuncs,
 	}
 }
 
