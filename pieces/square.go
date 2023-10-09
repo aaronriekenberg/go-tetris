@@ -5,30 +5,34 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-var createSquareOrientationFuncs = []createOrientationFunc{
-	func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
-		return []common.TetrisModelCoordinate{
-			centerCoordinate,
-			centerCoordinate.AddRows(1),
-			centerCoordinate.AddColumns(1),
-			centerCoordinate.AddRowsColumns(1, 1),
-		}
-	},
-}
-
 type squarePiece struct {
 	centerCoordinate common.TetrisModelCoordinate
 
 	orientation int
+
+	createOrientationFuncs []createOrientationFunc
 }
 
 func newSquarePiece(
 	centerCoordinate common.TetrisModelCoordinate,
 	orientation int,
 ) TetrisPiece {
+
+	createOrientationFuncs := []createOrientationFunc{
+		func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
+			return []common.TetrisModelCoordinate{
+				centerCoordinate,
+				centerCoordinate.AddRows(1),
+				centerCoordinate.AddColumns(1),
+				centerCoordinate.AddRowsColumns(1, 1),
+			}
+		},
+	}
+
 	return squarePiece{
-		centerCoordinate: centerCoordinate,
-		orientation:      orientation,
+		centerCoordinate:       centerCoordinate,
+		orientation:            orientation,
+		createOrientationFuncs: createOrientationFuncs,
 	}
 }
 
@@ -53,7 +57,7 @@ func (squarePiece squarePiece) CloneWithNewCenterCoordinate(
 }
 
 func (squarePiece squarePiece) CloneWithNextOrientation() TetrisPiece {
-	nextOrientation := (squarePiece.orientation + 1) % len(createSquareOrientationFuncs)
+	nextOrientation := (squarePiece.orientation + 1) % len(squarePiece.createOrientationFuncs)
 	return newSquarePiece(
 		squarePiece.centerCoordinate,
 		nextOrientation,
@@ -61,5 +65,5 @@ func (squarePiece squarePiece) CloneWithNextOrientation() TetrisPiece {
 }
 
 func (squarePiece squarePiece) Coordinates() []common.TetrisModelCoordinate {
-	return createSquareOrientationFuncs[squarePiece.orientation](squarePiece.centerCoordinate)
+	return squarePiece.createOrientationFuncs[squarePiece.orientation](squarePiece.centerCoordinate)
 }

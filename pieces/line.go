@@ -5,54 +5,58 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-var createLineOrientationFuncs = []createOrientationFunc{
-	func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
-		return []common.TetrisModelCoordinate{
-			centerCoordinate,
-			centerCoordinate.AddRows(1),
-			centerCoordinate.AddRows(2),
-			centerCoordinate.AddRows(3),
-		}
-	},
-	func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
-		return []common.TetrisModelCoordinate{
-			centerCoordinate,
-			centerCoordinate.AddColumns(1),
-			centerCoordinate.AddColumns(2),
-			centerCoordinate.AddColumns(3),
-		}
-	},
-	func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
-		return []common.TetrisModelCoordinate{
-			centerCoordinate,
-			centerCoordinate.AddRows(-1),
-			centerCoordinate.AddRows(-2),
-			centerCoordinate.AddRows(-3),
-		}
-	},
-	func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
-		return []common.TetrisModelCoordinate{
-			centerCoordinate,
-			centerCoordinate.AddColumns(-1),
-			centerCoordinate.AddColumns(-2),
-			centerCoordinate.AddColumns(-3),
-		}
-	},
-}
-
 type linePiece struct {
 	centerCoordinate common.TetrisModelCoordinate
 
 	orientation int
+
+	createOrientationFuncs []createOrientationFunc
 }
 
 func newLinePiece(
 	centerCoordinate common.TetrisModelCoordinate,
 	orientation int,
 ) TetrisPiece {
+
+	createOrientationFuncs := []createOrientationFunc{
+		func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
+			return []common.TetrisModelCoordinate{
+				centerCoordinate,
+				centerCoordinate.AddRows(1),
+				centerCoordinate.AddRows(2),
+				centerCoordinate.AddRows(3),
+			}
+		},
+		func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
+			return []common.TetrisModelCoordinate{
+				centerCoordinate,
+				centerCoordinate.AddColumns(1),
+				centerCoordinate.AddColumns(2),
+				centerCoordinate.AddColumns(3),
+			}
+		},
+		func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
+			return []common.TetrisModelCoordinate{
+				centerCoordinate,
+				centerCoordinate.AddRows(-1),
+				centerCoordinate.AddRows(-2),
+				centerCoordinate.AddRows(-3),
+			}
+		},
+		func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate {
+			return []common.TetrisModelCoordinate{
+				centerCoordinate,
+				centerCoordinate.AddColumns(-1),
+				centerCoordinate.AddColumns(-2),
+				centerCoordinate.AddColumns(-3),
+			}
+		},
+	}
+
 	return linePiece{
-		centerCoordinate: centerCoordinate,
-		orientation:      orientation,
+		centerCoordinate:       centerCoordinate,
+		orientation:            orientation,
+		createOrientationFuncs: createOrientationFuncs,
 	}
 }
 
@@ -80,7 +84,7 @@ func (linePiece linePiece) CloneWithNewCenterCoordinate(
 }
 
 func (linePiece linePiece) CloneWithNextOrientation() TetrisPiece {
-	nextOrientation := (linePiece.orientation + 1) % len(createLineOrientationFuncs)
+	nextOrientation := (linePiece.orientation + 1) % len(linePiece.createOrientationFuncs)
 	return newLinePiece(
 		linePiece.centerCoordinate,
 		nextOrientation,
@@ -88,5 +92,5 @@ func (linePiece linePiece) CloneWithNextOrientation() TetrisPiece {
 }
 
 func (linePiece linePiece) Coordinates() []common.TetrisModelCoordinate {
-	return createLineOrientationFuncs[linePiece.orientation](linePiece.centerCoordinate)
+	return linePiece.createOrientationFuncs[linePiece.orientation](linePiece.centerCoordinate)
 }
