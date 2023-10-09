@@ -9,3 +9,7 @@ TUI tetris in go using [tcell](https://github.com/gdamore/tcell).
 - Right Arrow: move piece right
 - Up Arrow: rotate piece
 - Space Bar: drop piece
+
+## Screenshot:
+
+![go-tetris](go-tetris.png)
