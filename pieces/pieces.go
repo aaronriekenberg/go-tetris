@@ -21,7 +21,9 @@ type TetrisPiece interface {
 	Coordinates() []common.TetrisModelCoordinate
 }
 
-var pieceConstructors = []func(centerCoordinate common.TetrisModelCoordinate) TetrisPiece{
+type pieceConstructor = func(centerCoordinate common.TetrisModelCoordinate) TetrisPiece
+
+var pieceConstructors = []pieceConstructor{
 	newSquarePieceDefaultOrientation,
 	newLinePieceDefaultOrientation,
 	newTPieceDefaultOrientation,
