@@ -111,12 +111,16 @@ func (view *View) HandleResizeEvent() {
 	view.Draw()
 }
 
-func (view *View) Finalize() {
-	view.screen.Fini()
+func (view *View) PollEvent() tcell.Event {
+	return view.screen.PollEvent()
 }
 
-func (view *View) Screen() tcell.Screen {
-	return view.screen
+func (view *View) PostEvent(ev tcell.Event) error {
+	return view.screen.PostEvent(ev)
+}
+
+func (view *View) Finalize() {
+	view.screen.Fini()
 }
 
 func (view *View) emitStr(x, y int, style tcell.Style, str string) {
