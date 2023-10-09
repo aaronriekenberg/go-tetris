@@ -53,7 +53,7 @@ func (squarePiece squarePiece) CenterCoordinate() common.TetrisModelCoordinate {
 func (squarePiece squarePiece) CloneWithNewCenterCoordinate(
 	newCenterCoordinate common.TetrisModelCoordinate,
 ) TetrisPiece {
-	return newSquarePiece(newCenterCoordinate, 0)
+	return newSquarePiece(newCenterCoordinate, squarePiece.orientation)
 }
 
 func (squarePiece squarePiece) CloneWithNextOrientation() TetrisPiece {
