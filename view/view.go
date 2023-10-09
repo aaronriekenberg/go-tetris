@@ -84,8 +84,7 @@ func (view *View) Draw() {
 
 	linesStyle := tcell.StyleDefault.Foreground(tcell.ColorBlack).Background(tcell.ColorWhite)
 
-	emitStr(
-		view.screen,
+	view.emitStr(
 		boardLeftX+(boardWidth/2)-5,
 		boardTopY+common.BoardRows+1,
 		linesStyle,
@@ -109,7 +108,9 @@ func (view *View) Screen() tcell.Screen {
 	return view.screen
 }
 
-func emitStr(s tcell.Screen, x, y int, style tcell.Style, str string) {
+func (view *View) emitStr(x, y int, style tcell.Style, str string) {
+	s := view.screen
+
 	for _, c := range str {
 		var comb []rune
 		w := runewidth.RuneWidth(c)
