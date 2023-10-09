@@ -34,6 +34,14 @@ func (tmc TetrisModelCoordinate) AddColumns(delta int) TetrisModelCoordinate {
 	return tmc
 }
 
+func (tmc TetrisModelCoordinate) AddRowsColumns(
+	rowsDelta, columnsDelta int,
+) TetrisModelCoordinate {
+	tmc.row += rowsDelta
+	tmc.column += columnsDelta
+	return tmc
+}
+
 func (tmc TetrisModelCoordinate) Row() int {
 	return tmc.row
 }

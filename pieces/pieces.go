@@ -42,10 +42,10 @@ func newSquarePiece(
 	centerCoordinate common.TetrisModelCoordinate,
 ) TetrisPiece {
 	coordinates := []common.TetrisModelCoordinate{
-		common.NewTetrisModelCoordinate(centerCoordinate.Row(), centerCoordinate.Column()),
-		common.NewTetrisModelCoordinate(centerCoordinate.Row()+1, centerCoordinate.Column()),
-		common.NewTetrisModelCoordinate(centerCoordinate.Row(), centerCoordinate.Column()+1),
-		common.NewTetrisModelCoordinate(centerCoordinate.Row()+1, centerCoordinate.Column()+1),
+		centerCoordinate,
+		centerCoordinate.AddRows(1),
+		centerCoordinate.AddColumns(1),
+		centerCoordinate.AddRowsColumns(1, 1),
 	}
 
 	return squarePiece{
@@ -86,10 +86,10 @@ func newLinePiece(
 	centerCoordinate common.TetrisModelCoordinate,
 ) TetrisPiece {
 	coordinates := []common.TetrisModelCoordinate{
-		common.NewTetrisModelCoordinate(centerCoordinate.Row(), centerCoordinate.Column()),
-		common.NewTetrisModelCoordinate(centerCoordinate.Row()+1, centerCoordinate.Column()),
-		common.NewTetrisModelCoordinate(centerCoordinate.Row()+2, centerCoordinate.Column()),
-		common.NewTetrisModelCoordinate(centerCoordinate.Row()+3, centerCoordinate.Column()),
+		centerCoordinate,
+		centerCoordinate.AddRows(1),
+		centerCoordinate.AddRows(2),
+		centerCoordinate.AddRows(3),
 	}
 
 	return linePiece{
