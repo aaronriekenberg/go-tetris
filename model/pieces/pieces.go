@@ -1,8 +1,6 @@
 package pieces
 
 import (
-	"math/rand"
-
 	"github.com/aaronriekenberg/go-tetris/common"
 	"github.com/gdamore/tcell/v2"
 )
@@ -20,6 +18,8 @@ type TetrisPiece interface {
 
 	Coordinates() []common.TetrisModelCoordinate
 }
+
+type createOrientationFunc = func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate
 
 type tetrisPiece struct {
 	color                  tcell.Color
@@ -64,23 +64,3 @@ func (tetrisPiece tetrisPiece) CloneWithNextOrientation() TetrisPiece {
 func (tetrisPiece tetrisPiece) Coordinates() []common.TetrisModelCoordinate {
 	return tetrisPiece.createOrientationFuncs[tetrisPiece.orientation](tetrisPiece.centerCoordinate)
 }
-
-type pieceConstructor = func(centerCoordinate common.TetrisModelCoordinate) TetrisPiece
-
-var pieceConstructors = []pieceConstructor{
-	newSquarePiece,
-	newLinePiece,
-	newTPiece,
-	newLeftZPiece,
-	newRightZPiece,
-	newLeftLPiece,
-	newRightLPiece,
-}
-
-func CreateRandomPiece(
-	centerCoordinate common.TetrisModelCoordinate,
-) TetrisPiece {
-	return pieceConstructors[rand.Intn(len(pieceConstructors))](centerCoordinate)
-}
-
-type createOrientationFunc = func(centerCoordinate common.TetrisModelCoordinate) []common.TetrisModelCoordinate
