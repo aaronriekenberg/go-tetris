@@ -21,16 +21,60 @@ type TetrisPiece interface {
 	Coordinates() []common.TetrisModelCoordinate
 }
 
+type tetrisPiece struct {
+	color                  tcell.Color
+	centerCoordinate       common.TetrisModelCoordinate
+	orientation            int
+	createOrientationFuncs []createOrientationFunc
+}
+
+func newTetrisPieceDefaultOrientation(
+	color tcell.Color,
+	centerCoordinate common.TetrisModelCoordinate,
+	createOrientationFuncs []createOrientationFunc,
+) tetrisPiece {
+	return tetrisPiece{
+		color:                  color,
+		centerCoordinate:       centerCoordinate,
+		orientation:            0,
+		createOrientationFuncs: createOrientationFuncs,
+	}
+}
+
+func (tetrisPiece tetrisPiece) Color() tcell.Color {
+	return tetrisPiece.color
+}
+
+func (tetrisPiece tetrisPiece) CenterCoordinate() common.TetrisModelCoordinate {
+	return tetrisPiece.centerCoordinate
+}
+
+func (tetrisPiece tetrisPiece) CloneWithNewCenterCoordinate(
+	newCenterCoordinate common.TetrisModelCoordinate,
+) TetrisPiece {
+	tetrisPiece.centerCoordinate = newCenterCoordinate
+	return tetrisPiece
+}
+
+func (tetrisPiece tetrisPiece) CloneWithNextOrientation() TetrisPiece {
+	tetrisPiece.orientation = (tetrisPiece.orientation + 1) % len(tetrisPiece.createOrientationFuncs)
+	return tetrisPiece
+}
+
+func (tetrisPiece tetrisPiece) Coordinates() []common.TetrisModelCoordinate {
+	return tetrisPiece.createOrientationFuncs[tetrisPiece.orientation](tetrisPiece.centerCoordinate)
+}
+
 type pieceConstructor = func(centerCoordinate common.TetrisModelCoordinate) TetrisPiece
 
 var pieceConstructors = []pieceConstructor{
-	newSquarePieceDefaultOrientation,
-	newLinePieceDefaultOrientation,
-	newTPieceDefaultOrientation,
-	newLeftZPieceDefaultOrientation,
-	newRigthZPieceDefaultOrientation,
-	newLeftLPieceDefaultOrientation,
-	newRightLPieceDefaultOrientation,
+	newSquarePiece,
+	newLinePiece,
+	newTPiece,
+	newLeftZPiece,
+	newRightZPiece,
+	newLeftLPiece,
+	newRightLPiece,
 }
 
 func CreateRandomPiece(
