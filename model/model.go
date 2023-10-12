@@ -4,7 +4,7 @@ import (
 	"slices"
 
 	"github.com/aaronriekenberg/go-tetris/common"
-	"github.com/aaronriekenberg/go-tetris/model/pieces"
+	"github.com/aaronriekenberg/go-tetris/pieces"
 
 	"github.com/gdamore/tcell/v2"
 )
