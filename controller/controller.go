@@ -69,6 +69,9 @@ func runEventLoop(
 			case tcell.KeyUp:
 				tetrisModel.RotateCurrentPiece()
 				view.Draw()
+			case tcell.KeyDown:
+				tetrisModel.MoveCurrentPieceDown()
+				view.Draw()
 			case tcell.KeyRune:
 				switch ev.Rune() {
 				case 'q':
