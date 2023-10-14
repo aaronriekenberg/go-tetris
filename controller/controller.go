@@ -76,6 +76,9 @@ func runEventLoop(
 				switch ev.Rune() {
 				case 'q':
 					quit()
+				case 'r':
+					tetrisModel.Restart()
+					view.Draw()
 				case ' ':
 					tetrisModel.DropCurrentPiece()
 					view.Draw()

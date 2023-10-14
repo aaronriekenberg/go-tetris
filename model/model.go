@@ -35,6 +35,7 @@ type DrawableInfoModel interface {
 
 type TetrisModel interface {
 	DrawableInfoModel
+	Restart()
 	MoveCurrentPieceDown()
 	MoveCurrentPieceLeft()
 	MoveCurrentPieceRight()
@@ -52,6 +53,10 @@ type tetrisModel struct {
 }
 
 func NewTetrisModel() TetrisModel {
+	return newTetrisModel()
+}
+
+func newTetrisModel() *tetrisModel {
 	tetrisModel := &tetrisModel{}
 
 	tetrisModel.initializeStackCells()
@@ -59,19 +64,19 @@ func NewTetrisModel() TetrisModel {
 	return tetrisModel
 }
 
-func (tetrisModel *tetrisModel) initializeStackCells() {
+func (tm *tetrisModel) initializeStackCells() {
 	stackCells := make([][]tetrisModelCell, common.BoardRows)
 
 	for row := 0; row < common.BoardRows; row += 1 {
 		stackCells[row] = make([]tetrisModelCell, common.BoardColumns)
 	}
 
-	tetrisModel.stackCells = stackCells
+	tm.stackCells = stackCells
 }
 
-func (tetrisModel *tetrisModel) DrawableCells() [][]TetrisModelCell {
-	if tetrisModel.drawableCellsCache != nil {
-		return tetrisModel.drawableCellsCache
+func (tm *tetrisModel) DrawableCells() [][]TetrisModelCell {
+	if tm.drawableCellsCache != nil {
+		return tm.drawableCellsCache
 	}
 
 	drawableCellsCache := make([][]TetrisModelCell, common.BoardRows)
@@ -79,51 +84,51 @@ func (tetrisModel *tetrisModel) DrawableCells() [][]TetrisModelCell {
 	for row := 0; row < common.BoardRows; row += 1 {
 		drawableCellsCache[row] = make([]TetrisModelCell, common.BoardColumns)
 		for column := 0; column < common.BoardColumns; column += 1 {
-			drawableCellsCache[row][column] = tetrisModel.stackCells[row][column]
+			drawableCellsCache[row][column] = tm.stackCells[row][column]
 		}
 	}
 
-	if tetrisModel.currentPiece != nil {
-		for _, coordinates := range tetrisModel.currentPiece.Coordinates() {
+	if tm.currentPiece != nil {
+		for _, coordinates := range tm.currentPiece.Coordinates() {
 			drawableCell := tetrisModelCell{
 				occupied: true,
-				color:    tetrisModel.currentPiece.Color(),
+				color:    tm.currentPiece.Color(),
 			}
 			drawableCellsCache[coordinates.Row()][coordinates.Column()] = drawableCell
 		}
 	}
 
-	tetrisModel.drawableCellsCache = drawableCellsCache
+	tm.drawableCellsCache = drawableCellsCache
 
-	return tetrisModel.drawableCellsCache
+	return tm.drawableCellsCache
 }
 
-func (tetrisModel *tetrisModel) Lines() int {
-	return tetrisModel.lines
+func (tm *tetrisModel) invalidateDrawableCellsCache() {
+	tm.drawableCellsCache = nil
 }
 
-func (tetrisModel *tetrisModel) GameOver() bool {
-	return tetrisModel.gameOver
+func (tm *tetrisModel) Lines() int {
+	return tm.lines
 }
 
-func (tetrisModel *tetrisModel) invalidateDrawableCellsCache() {
-	tetrisModel.drawableCellsCache = nil
+func (tm *tetrisModel) GameOver() bool {
+	return tm.gameOver
 }
 
-func (tetrisModel *tetrisModel) isPieceLocationValid(
+func (tm *tetrisModel) isPieceLocationValid(
 	tetrisPiece pieces.TetrisPiece,
 ) bool {
 	for _, coordinate := range tetrisPiece.Coordinates() {
 		if !coordinate.Valid() {
 			return false
-		} else if tetrisModel.stackCells[coordinate.Row()][coordinate.Column()].occupied {
+		} else if tm.stackCells[coordinate.Row()][coordinate.Column()].occupied {
 			return false
 		}
 	}
 	return true
 }
 
-func (tetrisModel *tetrisModel) addNewPiece() {
+func (tm *tetrisModel) addNewPiece() {
 	centerCoordinate := common.NewTetrisModelCoordinate(
 		0,
 		(common.BoardColumns/2)-1,
@@ -131,20 +136,24 @@ func (tetrisModel *tetrisModel) addNewPiece() {
 
 	newPiece := pieces.CreateRandomPiece(centerCoordinate)
 
-	if !tetrisModel.isPieceLocationValid(newPiece) {
-		tetrisModel.gameOver = true
+	if !tm.isPieceLocationValid(newPiece) {
+		tm.gameOver = true
 		return
 	}
 
-	tetrisModel.currentPiece = newPiece
+	tm.currentPiece = newPiece
 }
 
-func (tetrisModel *tetrisModel) MoveCurrentPieceDown() {
-	if tetrisModel.gameOver {
+func (tm *tetrisModel) Restart() {
+	*tm = *newTetrisModel()
+}
+
+func (tm *tetrisModel) MoveCurrentPieceDown() {
+	if tm.gameOver {
 		return
 	}
 
-	currentPiece := tetrisModel.currentPiece
+	currentPiece := tm.currentPiece
 	if currentPiece != nil {
 		centerCoordinate := currentPiece.CenterCoordinate()
 
@@ -152,22 +161,22 @@ func (tetrisModel *tetrisModel) MoveCurrentPieceDown() {
 
 		updatedPiece := currentPiece.CloneWithNewCenterCoordinate(newCenterCoordinate)
 
-		if !tetrisModel.isPieceLocationValid(updatedPiece) {
-			tetrisModel.addCurrentPieceToStack()
+		if !tm.isPieceLocationValid(updatedPiece) {
+			tm.addCurrentPieceToStack()
 		} else {
-			tetrisModel.currentPiece = updatedPiece
+			tm.currentPiece = updatedPiece
 		}
 
-		tetrisModel.invalidateDrawableCellsCache()
+		tm.invalidateDrawableCellsCache()
 	}
 }
 
-func (tetrisModel *tetrisModel) MoveCurrentPieceLeft() {
-	if tetrisModel.gameOver {
+func (tm *tetrisModel) MoveCurrentPieceLeft() {
+	if tm.gameOver {
 		return
 	}
 
-	currentPiece := tetrisModel.currentPiece
+	currentPiece := tm.currentPiece
 	if currentPiece != nil {
 		centerCoordinate := currentPiece.CenterCoordinate()
 
@@ -175,20 +184,20 @@ func (tetrisModel *tetrisModel) MoveCurrentPieceLeft() {
 
 		updatedPiece := currentPiece.CloneWithNewCenterCoordinate(newCenterCoordinate)
 
-		if tetrisModel.isPieceLocationValid(updatedPiece) {
-			tetrisModel.currentPiece = updatedPiece
+		if tm.isPieceLocationValid(updatedPiece) {
+			tm.currentPiece = updatedPiece
 
-			tetrisModel.invalidateDrawableCellsCache()
+			tm.invalidateDrawableCellsCache()
 		}
 	}
 }
 
-func (tetrisModel *tetrisModel) MoveCurrentPieceRight() {
-	if tetrisModel.gameOver {
+func (tm *tetrisModel) MoveCurrentPieceRight() {
+	if tm.gameOver {
 		return
 	}
 
-	currentPiece := tetrisModel.currentPiece
+	currentPiece := tm.currentPiece
 	if currentPiece != nil {
 		centerCoordinate := currentPiece.CenterCoordinate()
 
@@ -196,85 +205,85 @@ func (tetrisModel *tetrisModel) MoveCurrentPieceRight() {
 
 		updatedPiece := currentPiece.CloneWithNewCenterCoordinate(newCenterCoordinate)
 
-		if tetrisModel.isPieceLocationValid(updatedPiece) {
-			tetrisModel.currentPiece = updatedPiece
+		if tm.isPieceLocationValid(updatedPiece) {
+			tm.currentPiece = updatedPiece
 
-			tetrisModel.invalidateDrawableCellsCache()
+			tm.invalidateDrawableCellsCache()
 		}
 	}
 }
 
-func (tetrisModel *tetrisModel) RotateCurrentPiece() {
-	if tetrisModel.gameOver {
+func (tm *tetrisModel) RotateCurrentPiece() {
+	if tm.gameOver {
 		return
 	}
 
-	currentPiece := tetrisModel.currentPiece
+	currentPiece := tm.currentPiece
 	if currentPiece != nil {
 		updatedPiece := currentPiece.CloneWithNextOrientation()
 
-		if tetrisModel.isPieceLocationValid(updatedPiece) {
-			tetrisModel.currentPiece = updatedPiece
+		if tm.isPieceLocationValid(updatedPiece) {
+			tm.currentPiece = updatedPiece
 
-			tetrisModel.invalidateDrawableCellsCache()
+			tm.invalidateDrawableCellsCache()
 		}
 	}
 }
 
-func (tetrisModel *tetrisModel) DropCurrentPiece() {
-	if tetrisModel.gameOver {
+func (tm *tetrisModel) DropCurrentPiece() {
+	if tm.gameOver {
 		return
 	}
 
-	for tetrisModel.currentPiece != nil {
-		tetrisModel.MoveCurrentPieceDown()
+	for tm.currentPiece != nil {
+		tm.MoveCurrentPieceDown()
 	}
 }
 
-func (tetrisModel *tetrisModel) addCurrentPieceToStack() {
-	currentPiece := tetrisModel.currentPiece
+func (tm *tetrisModel) addCurrentPieceToStack() {
+	currentPiece := tm.currentPiece
 	if currentPiece != nil {
 		for _, coordinate := range currentPiece.Coordinates() {
-			tetrisModel.stackCells[coordinate.Row()][coordinate.Column()].occupied = true
-			tetrisModel.stackCells[coordinate.Row()][coordinate.Column()].color = currentPiece.Color()
+			tm.stackCells[coordinate.Row()][coordinate.Column()].occupied = true
+			tm.stackCells[coordinate.Row()][coordinate.Column()].color = currentPiece.Color()
 		}
 	}
-	tetrisModel.currentPiece = nil
+	tm.currentPiece = nil
 
-	tetrisModel.handleFilledStackRows()
+	tm.handleFilledStackRows()
 }
 
-func (tetrisModel *tetrisModel) handleFilledStackRows() {
+func (tm *tetrisModel) handleFilledStackRows() {
 	row := common.BoardRows - 1
 
 	for row >= 0 {
 		rowIsFull := true
-		for _, cell := range tetrisModel.stackCells[row] {
+		for _, cell := range tm.stackCells[row] {
 			if !cell.occupied {
 				rowIsFull = false
 				break
 			}
 		}
 		if rowIsFull {
-			tetrisModel.stackCells = slices.Delete(tetrisModel.stackCells, row, row+1)
-			tetrisModel.stackCells = slices.Insert(tetrisModel.stackCells, 0, make([]tetrisModelCell, common.BoardColumns))
-			tetrisModel.lines += 1
+			tm.stackCells = slices.Delete(tm.stackCells, row, row+1)
+			tm.stackCells = slices.Insert(tm.stackCells, 0, make([]tetrisModelCell, common.BoardColumns))
+			tm.lines += 1
 		} else {
 			row -= 1
 		}
 	}
 }
 
-func (tetrisModel *tetrisModel) PeriodicUpdate() {
-	if tetrisModel.gameOver {
+func (tm *tetrisModel) PeriodicUpdate() {
+	if tm.gameOver {
 		return
 	}
 
-	if tetrisModel.currentPiece == nil {
-		tetrisModel.addNewPiece()
+	if tm.currentPiece == nil {
+		tm.addNewPiece()
 	} else {
-		tetrisModel.MoveCurrentPieceDown()
+		tm.MoveCurrentPieceDown()
 	}
 
-	tetrisModel.invalidateDrawableCellsCache()
+	tm.invalidateDrawableCellsCache()
 }
