@@ -6,6 +6,7 @@ import (
 
 	"github.com/aaronriekenberg/go-tetris/coord"
 	"github.com/aaronriekenberg/go-tetris/model"
+	"github.com/aaronriekenberg/go-tetris/version"
 
 	"github.com/gdamore/tcell/v2"
 	_ "github.com/gdamore/tcell/v2/encoding"
@@ -16,6 +17,7 @@ import (
 type View struct {
 	screen            tcell.Screen
 	drawableInfoModel model.DrawableInfoModel
+	showVersion       bool
 }
 
 func NewView(
@@ -90,6 +92,14 @@ func (view *View) Draw() {
 
 	textStyle := tcell.StyleDefault.Foreground(tcell.ColorBlack).Background(tcell.ColorWhite)
 
+	if view.showVersion {
+		view.emitStr(
+			0, 0,
+			textStyle,
+			version.VersionInfoString(),
+		)
+	}
+
 	view.emitStr(
 		boardLeftX+(boardWidthCells/2)-5,
 		boardTopY+boardHeightCells+1,
@@ -111,6 +121,22 @@ func (view *View) Draw() {
 	view.screen.Show()
 }
 
+func (view *View) emitStr(x, y int, style tcell.Style, str string) {
+	s := view.screen
+
+	for _, c := range str {
+		var comb []rune
+		w := runewidth.RuneWidth(c)
+		if w == 0 {
+			comb = []rune{c}
+			c = ' '
+			w = 1
+		}
+		s.SetContent(x, y, c, comb, style)
+		x += w
+	}
+}
+
 func (view *View) HandleResizeEvent() {
 	view.screen.Clear()
 	view.screen.Sync()
@@ -129,18 +155,6 @@ func (view *View) Finalize() {
 	view.screen.Fini()
 }
 
-func (view *View) emitStr(x, y int, style tcell.Style, str string) {
-	s := view.screen
-
-	for _, c := range str {
-		var comb []rune
-		w := runewidth.RuneWidth(c)
-		if w == 0 {
-			comb = []rune{c}
-			c = ' '
-			w = 1
-		}
-		s.SetContent(x, y, c, comb, style)
-		x += w
-	}
+func (view *View) ToggleShowVersion() {
+	view.showVersion = !view.showVersion
 }

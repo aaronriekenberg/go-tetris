@@ -83,6 +83,10 @@ func runEventLoop(
 				case ' ':
 					tetrisModel.DropCurrentPiece()
 					view.Draw()
+				case 'v':
+					view.ToggleShowVersion()
+					view.Clear()
+					view.Draw()
 				}
 			}
 		case *tcell.EventResize:
