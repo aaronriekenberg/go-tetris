@@ -43,8 +43,6 @@ func NewView(
 	}
 }
 
-var bgStyle = tcell.StyleDefault.Foreground(tcell.ColorBlack).Background(tcell.ColorBlack)
-
 func (view *View) Draw() {
 
 	drawableCells := view.drawableInfoModel.DrawableCells()
@@ -62,6 +60,8 @@ func (view *View) Draw() {
 
 	const boardHeightCells = coord.BoardRows
 	boardTopY := (h - boardHeightCells) / 2
+
+	bgStyle := tcell.StyleDefault.Foreground(tcell.ColorBlack).Background(tcell.ColorBlack)
 
 	for viewColumn := 0; viewColumn < boardWidthCells; viewColumn += 2 {
 		for viewRow := 0; viewRow < boardHeightCells; viewRow += 1 {
