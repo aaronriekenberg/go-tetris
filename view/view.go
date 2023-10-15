@@ -43,6 +43,10 @@ func NewView(
 	}
 }
 
+func (view *View) Clear() {
+	view.screen.Clear()
+}
+
 func (view *View) Draw() {
 
 	w, h := view.screen.Size()
@@ -77,8 +81,10 @@ func (view *View) Draw() {
 				style = tcell.StyleDefault.Foreground(modelCell.Color()).Background(modelCell.Color())
 			}
 
-			view.screen.SetContent(boardLeftX+viewColumn, boardTopY+viewRow, ' ', comb, style)
-			view.screen.SetContent(boardLeftX+viewColumn+1, boardTopY+viewRow, ' ', comb, style)
+			x, y := boardLeftX+viewColumn, boardTopY+viewRow
+
+			view.screen.SetContent(x, y, ' ', comb, style)
+			view.screen.SetContent(x+1, y, ' ', comb, style)
 		}
 	}
 
