@@ -51,18 +51,20 @@ func (view *View) Draw() {
 
 	w, h := view.screen.Size()
 
-	// s.Clear()
-
 	if w < (coord.BoardColumns*2) || h < coord.BoardRows {
+		view.screen.Clear()
 		view.screen.Show()
 		return
 	}
-	boardWidth := coord.BoardColumns * 2
-	boardLeftX := (w - boardWidth) / 2
-	boardTopY := (h - coord.BoardRows) / 2
 
-	for viewColumn := 0; viewColumn < (coord.BoardColumns * 2); viewColumn += 2 {
-		for viewRow := 0; viewRow < (coord.BoardRows); viewRow += 1 {
+	const boardWidthCells = coord.BoardColumns * 2
+	boardLeftX := (w - boardWidthCells) / 2
+
+	const boardHeightCells = coord.BoardRows
+	boardTopY := (h - boardHeightCells) / 2
+
+	for viewColumn := 0; viewColumn < boardWidthCells; viewColumn += 2 {
+		for viewRow := 0; viewRow < boardHeightCells; viewRow += 1 {
 			var comb []rune
 			modelRow := viewRow
 			modelColumn := (viewColumn / 2)
@@ -85,8 +87,8 @@ func (view *View) Draw() {
 	textStyle := tcell.StyleDefault.Foreground(tcell.ColorBlack).Background(tcell.ColorWhite)
 
 	view.emitStr(
-		boardLeftX+(boardWidth/2)-5,
-		boardTopY+coord.BoardRows+1,
+		boardLeftX+(boardWidthCells/2)-5,
+		boardTopY+boardHeightCells+1,
 		textStyle,
 		fmt.Sprintf("Lines: % 3v", view.drawableInfoModel.Lines()),
 	)
@@ -95,8 +97,8 @@ func (view *View) Draw() {
 		textStyle = tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorBlack)
 
 		view.emitStr(
-			boardLeftX+(boardWidth/2)-4,
-			boardTopY+coord.BoardRows+3,
+			boardLeftX+(boardWidthCells/2)-4,
+			boardTopY+boardHeightCells+3,
 			textStyle,
 			"GAME OVER",
 		)
