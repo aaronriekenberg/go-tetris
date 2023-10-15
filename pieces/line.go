@@ -1,37 +1,38 @@
 package pieces
 
 import (
-	"github.com/aaronriekenberg/go-tetris/coord"
 	"github.com/gdamore/tcell/v2"
+
+	"github.com/aaronriekenberg/go-tetris/coordinate"
 )
 
 var linePieceOrientationFuncs = []createOrientationFunc{
-	func(centerCoordinate coord.TetrisModelCoordinate) []coord.TetrisModelCoordinate {
-		return []coord.TetrisModelCoordinate{
+	func(centerCoordinate coordinate.TetrisModelCoordinate) []coordinate.TetrisModelCoordinate {
+		return []coordinate.TetrisModelCoordinate{
 			centerCoordinate,
 			centerCoordinate.AddRows(1),
 			centerCoordinate.AddRows(2),
 			centerCoordinate.AddRows(3),
 		}
 	},
-	func(centerCoordinate coord.TetrisModelCoordinate) []coord.TetrisModelCoordinate {
-		return []coord.TetrisModelCoordinate{
+	func(centerCoordinate coordinate.TetrisModelCoordinate) []coordinate.TetrisModelCoordinate {
+		return []coordinate.TetrisModelCoordinate{
 			centerCoordinate,
 			centerCoordinate.AddColumns(1),
 			centerCoordinate.AddColumns(2),
 			centerCoordinate.AddColumns(3),
 		}
 	},
-	func(centerCoordinate coord.TetrisModelCoordinate) []coord.TetrisModelCoordinate {
-		return []coord.TetrisModelCoordinate{
+	func(centerCoordinate coordinate.TetrisModelCoordinate) []coordinate.TetrisModelCoordinate {
+		return []coordinate.TetrisModelCoordinate{
 			centerCoordinate,
 			centerCoordinate.AddRows(-1),
 			centerCoordinate.AddRows(-2),
 			centerCoordinate.AddRows(-3),
 		}
 	},
-	func(centerCoordinate coord.TetrisModelCoordinate) []coord.TetrisModelCoordinate {
-		return []coord.TetrisModelCoordinate{
+	func(centerCoordinate coordinate.TetrisModelCoordinate) []coordinate.TetrisModelCoordinate {
+		return []coordinate.TetrisModelCoordinate{
 			centerCoordinate,
 			centerCoordinate.AddColumns(-1),
 			centerCoordinate.AddColumns(-2),
@@ -41,7 +42,7 @@ var linePieceOrientationFuncs = []createOrientationFunc{
 }
 
 func newLinePiece(
-	centerCoordinate coord.TetrisModelCoordinate,
+	centerCoordinate coordinate.TetrisModelCoordinate,
 ) TetrisPiece {
 	return newTetrisPieceDefaultOrientation(
 		tcell.ColorRed,

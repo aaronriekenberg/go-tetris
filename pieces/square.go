@@ -1,13 +1,14 @@
 package pieces
 
 import (
-	"github.com/aaronriekenberg/go-tetris/coord"
 	"github.com/gdamore/tcell/v2"
+
+	"github.com/aaronriekenberg/go-tetris/coordinate"
 )
 
 var squarePieceOrientationFuncs = []createOrientationFunc{
-	func(centerCoordinate coord.TetrisModelCoordinate) []coord.TetrisModelCoordinate {
-		return []coord.TetrisModelCoordinate{
+	func(centerCoordinate coordinate.TetrisModelCoordinate) []coordinate.TetrisModelCoordinate {
+		return []coordinate.TetrisModelCoordinate{
 			centerCoordinate,
 			centerCoordinate.AddRows(1),
 			centerCoordinate.AddColumns(1),
@@ -17,7 +18,7 @@ var squarePieceOrientationFuncs = []createOrientationFunc{
 }
 
 func newSquarePiece(
-	centerCoordinate coord.TetrisModelCoordinate,
+	centerCoordinate coordinate.TetrisModelCoordinate,
 ) TetrisPiece {
 	return newTetrisPieceDefaultOrientation(
 		tcell.ColorGreen,

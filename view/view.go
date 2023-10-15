@@ -3,7 +3,7 @@ package view
 import (
 	"fmt"
 
-	"github.com/aaronriekenberg/go-tetris/coord"
+	"github.com/aaronriekenberg/go-tetris/coordinate"
 	"github.com/aaronriekenberg/go-tetris/model"
 	"github.com/aaronriekenberg/go-tetris/version"
 
@@ -46,8 +46,8 @@ func (view *view) Clear() {
 	view.tcellScreen.Clear()
 }
 
-const boardWidthCells = coord.BoardColumns * 2
-const boardHeightCells = coord.BoardRows
+const boardWidthCells = coordinate.BoardColumns * 2
+const boardHeightCells = coordinate.BoardRows
 
 func (view *view) drawBoard(
 	boardLeftX, boardTopY int,

@@ -1,4 +1,4 @@
-package coord
+package coordinate
 
 const (
 	BoardRows    = 16

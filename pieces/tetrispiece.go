@@ -1,36 +1,37 @@
 package pieces
 
 import (
-	"github.com/aaronriekenberg/go-tetris/coord"
 	"github.com/gdamore/tcell/v2"
+
+	"github.com/aaronriekenberg/go-tetris/coordinate"
 )
 
 type TetrisPiece interface {
 	Color() tcell.Color
 
-	CenterCoordinate() coord.TetrisModelCoordinate
+	CenterCoordinate() coordinate.TetrisModelCoordinate
 
 	CloneWithNewCenterCoordinate(
-		newCenterCoordinate coord.TetrisModelCoordinate,
+		newCenterCoordinate coordinate.TetrisModelCoordinate,
 	) TetrisPiece
 
 	CloneWithNextOrientation() TetrisPiece
 
-	Coordinates() []coord.TetrisModelCoordinate
+	Coordinates() []coordinate.TetrisModelCoordinate
 }
 
-type createOrientationFunc = func(centerCoordinate coord.TetrisModelCoordinate) []coord.TetrisModelCoordinate
+type createOrientationFunc = func(centerCoordinate coordinate.TetrisModelCoordinate) []coordinate.TetrisModelCoordinate
 
 type tetrisPiece struct {
 	color                  tcell.Color
-	centerCoordinate       coord.TetrisModelCoordinate
+	centerCoordinate       coordinate.TetrisModelCoordinate
 	orientation            int
 	createOrientationFuncs []createOrientationFunc
 }
 
 func newTetrisPieceDefaultOrientation(
 	color tcell.Color,
-	centerCoordinate coord.TetrisModelCoordinate,
+	centerCoordinate coordinate.TetrisModelCoordinate,
 	createOrientationFuncs []createOrientationFunc,
 ) tetrisPiece {
 	return tetrisPiece{
@@ -45,12 +46,12 @@ func (tetrisPiece tetrisPiece) Color() tcell.Color {
 	return tetrisPiece.color
 }
 
-func (tetrisPiece tetrisPiece) CenterCoordinate() coord.TetrisModelCoordinate {
+func (tetrisPiece tetrisPiece) CenterCoordinate() coordinate.TetrisModelCoordinate {
 	return tetrisPiece.centerCoordinate
 }
 
 func (tetrisPiece tetrisPiece) CloneWithNewCenterCoordinate(
-	newCenterCoordinate coord.TetrisModelCoordinate,
+	newCenterCoordinate coordinate.TetrisModelCoordinate,
 ) TetrisPiece {
 	tetrisPiece.centerCoordinate = newCenterCoordinate
 	return tetrisPiece
@@ -61,6 +62,6 @@ func (tetrisPiece tetrisPiece) CloneWithNextOrientation() TetrisPiece {
 	return tetrisPiece
 }
 
-func (tetrisPiece tetrisPiece) Coordinates() []coord.TetrisModelCoordinate {
+func (tetrisPiece tetrisPiece) Coordinates() []coordinate.TetrisModelCoordinate {
 	return tetrisPiece.createOrientationFuncs[tetrisPiece.orientation](tetrisPiece.centerCoordinate)
 }

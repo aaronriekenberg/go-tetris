@@ -1,21 +1,22 @@
 package pieces
 
 import (
-	"github.com/aaronriekenberg/go-tetris/coord"
 	"github.com/gdamore/tcell/v2"
+
+	"github.com/aaronriekenberg/go-tetris/coordinate"
 )
 
 var leftZPieceOrientationFuncs = []createOrientationFunc{
-	func(centerCoordinate coord.TetrisModelCoordinate) []coord.TetrisModelCoordinate {
-		return []coord.TetrisModelCoordinate{
+	func(centerCoordinate coordinate.TetrisModelCoordinate) []coordinate.TetrisModelCoordinate {
+		return []coordinate.TetrisModelCoordinate{
 			centerCoordinate,
 			centerCoordinate.AddColumns(-1),
 			centerCoordinate.AddRows(1),
 			centerCoordinate.AddRowsColumns(1, 1),
 		}
 	},
-	func(centerCoordinate coord.TetrisModelCoordinate) []coord.TetrisModelCoordinate {
-		return []coord.TetrisModelCoordinate{
+	func(centerCoordinate coordinate.TetrisModelCoordinate) []coordinate.TetrisModelCoordinate {
+		return []coordinate.TetrisModelCoordinate{
 			centerCoordinate,
 			centerCoordinate.AddRows(1),
 			centerCoordinate.AddColumns(1),
@@ -25,7 +26,7 @@ var leftZPieceOrientationFuncs = []createOrientationFunc{
 }
 
 func newLeftZPiece(
-	centerCoordinate coord.TetrisModelCoordinate,
+	centerCoordinate coordinate.TetrisModelCoordinate,
 ) TetrisPiece {
 	return newTetrisPieceDefaultOrientation(
 		tcell.ColorYellow,

@@ -1,37 +1,38 @@
 package pieces
 
 import (
-	"github.com/aaronriekenberg/go-tetris/coord"
 	"github.com/gdamore/tcell/v2"
+
+	"github.com/aaronriekenberg/go-tetris/coordinate"
 )
 
 var tPieceOrientationFuncs = []createOrientationFunc{
-	func(centerCoordinate coord.TetrisModelCoordinate) []coord.TetrisModelCoordinate {
-		return []coord.TetrisModelCoordinate{
+	func(centerCoordinate coordinate.TetrisModelCoordinate) []coordinate.TetrisModelCoordinate {
+		return []coordinate.TetrisModelCoordinate{
 			centerCoordinate,
 			centerCoordinate.AddColumns(1),
 			centerCoordinate.AddColumns(-1),
 			centerCoordinate.AddRows(1),
 		}
 	},
-	func(centerCoordinate coord.TetrisModelCoordinate) []coord.TetrisModelCoordinate {
-		return []coord.TetrisModelCoordinate{
+	func(centerCoordinate coordinate.TetrisModelCoordinate) []coordinate.TetrisModelCoordinate {
+		return []coordinate.TetrisModelCoordinate{
 			centerCoordinate.AddRows(-1),
 			centerCoordinate,
 			centerCoordinate.AddRows(1),
 			centerCoordinate.AddColumns(1),
 		}
 	},
-	func(centerCoordinate coord.TetrisModelCoordinate) []coord.TetrisModelCoordinate {
-		return []coord.TetrisModelCoordinate{
+	func(centerCoordinate coordinate.TetrisModelCoordinate) []coordinate.TetrisModelCoordinate {
+		return []coordinate.TetrisModelCoordinate{
 			centerCoordinate,
 			centerCoordinate.AddColumns(1),
 			centerCoordinate.AddColumns(-1),
 			centerCoordinate.AddRows(-1),
 		}
 	},
-	func(centerCoordinate coord.TetrisModelCoordinate) []coord.TetrisModelCoordinate {
-		return []coord.TetrisModelCoordinate{
+	func(centerCoordinate coordinate.TetrisModelCoordinate) []coordinate.TetrisModelCoordinate {
+		return []coordinate.TetrisModelCoordinate{
 			centerCoordinate.AddRows(-1),
 			centerCoordinate,
 			centerCoordinate.AddRows(1),
@@ -41,7 +42,7 @@ var tPieceOrientationFuncs = []createOrientationFunc{
 }
 
 func newTPiece(
-	centerCoordinate coord.TetrisModelCoordinate,
+	centerCoordinate coordinate.TetrisModelCoordinate,
 ) TetrisPiece {
 	return newTetrisPieceDefaultOrientation(
 		tcell.ColorDarkCyan,
