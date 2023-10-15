@@ -27,7 +27,7 @@ func Run() {
 }
 
 func runEventLoop(
-	screen view.ScreenEventHandler,
+	eventSource view.ScreenEventSource,
 	view view.View,
 	tetrisModel model.TetrisModel,
 ) {
@@ -36,7 +36,7 @@ func runEventLoop(
 		for {
 			<-periodicUpdateTicker.C
 
-			screen.PostEvent(tcell.NewEventInterrupt(periodicUpdateInterruptCustomEvent{}))
+			eventSource.PostEvent(tcell.NewEventInterrupt(periodicUpdateInterruptCustomEvent{}))
 		}
 	}()
 
@@ -50,7 +50,7 @@ func runEventLoop(
 		done = true
 
 		maybePanic := recover()
-		screen.Fini()
+		eventSource.Fini()
 		if maybePanic != nil {
 			panic(maybePanic)
 		}
@@ -58,7 +58,7 @@ func runEventLoop(
 	defer quit()
 
 	for !done {
-		ev := screen.PollEvent()
+		ev := eventSource.PollEvent()
 		switch ev := ev.(type) {
 		case *tcell.EventInterrupt:
 			switch ev.Data().(type) {
