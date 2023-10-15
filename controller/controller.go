@@ -12,13 +12,23 @@ import (
 func Run() {
 	tetrisModel := model.NewTetrisModel()
 
-	view := view.NewView(tetrisModel)
+	screen := view.NewScreen()
 
-	runEventLoop(view, tetrisModel)
+	view := view.NewView(
+		screen,
+		tetrisModel,
+	)
+
+	runEventLoop(
+		screen,
+		view,
+		tetrisModel,
+	)
 }
 
 func runEventLoop(
-	view *view.View,
+	screen view.Screen,
+	view view.View,
 	tetrisModel model.TetrisModel,
 ) {
 	periodicUpdateTicker := time.NewTicker(500 * time.Millisecond)
@@ -26,7 +36,7 @@ func runEventLoop(
 		for {
 			<-periodicUpdateTicker.C
 
-			view.PostEvent(tcell.NewEventInterrupt(periodicUpdateInterruptCustomEvent{}))
+			screen.PostEvent(tcell.NewEventInterrupt(periodicUpdateInterruptCustomEvent{}))
 		}
 	}()
 
@@ -40,7 +50,7 @@ func runEventLoop(
 		done = true
 
 		maybePanic := recover()
-		view.Finalize()
+		screen.Fini()
 		if maybePanic != nil {
 			panic(maybePanic)
 		}
@@ -48,7 +58,7 @@ func runEventLoop(
 	defer quit()
 
 	for !done {
-		ev := view.PollEvent()
+		ev := screen.PollEvent()
 		switch ev := ev.(type) {
 		case *tcell.EventInterrupt:
 			switch ev.Data().(type) {

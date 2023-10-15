@@ -2,57 +2,54 @@ package view
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/aaronriekenberg/go-tetris/coord"
 	"github.com/aaronriekenberg/go-tetris/model"
 	"github.com/aaronriekenberg/go-tetris/version"
 
 	"github.com/gdamore/tcell/v2"
-	_ "github.com/gdamore/tcell/v2/encoding"
 
 	"github.com/mattn/go-runewidth"
 )
 
-type View struct {
-	screen            tcell.Screen
+type View interface {
+	Clear()
+	Draw()
+	HandleResizeEvent()
+	ToggleShowVersion()
+}
+
+type view struct {
+	tcellScreen       tcell.Screen
 	drawableInfoModel model.DrawableInfoModel
 	showVersion       bool
 }
 
 func NewView(
+	screen Screen,
 	drawableInfoModel model.DrawableInfoModel,
-) *View {
-	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
-	screen, e := tcell.NewScreen()
-	if e != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", e)
-		os.Exit(1)
-	}
-	if e = screen.Init(); e != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", e)
-		os.Exit(1)
-	}
+) View {
+	tcellScreen := screen.tcellScreen()
 
-	screen.SetStyle(tcell.StyleDefault.
+	tcellScreen.SetStyle(tcell.StyleDefault.
 		Foreground(tcell.ColorBlack).
 		Background(tcell.ColorWhite))
-	screen.Clear()
+	tcellScreen.Clear()
 
-	return &View{
-		screen:            screen,
+	return &view{
+		tcellScreen:       tcellScreen,
 		drawableInfoModel: drawableInfoModel,
 	}
 }
 
-func (view *View) Clear() {
-	view.screen.Clear()
+func (view *view) Clear() {
+	view.tcellScreen.Clear()
 }
 
 const boardWidthCells = coord.BoardColumns * 2
 const boardHeightCells = coord.BoardRows
 
-func (view *View) drawBoard(
+func (view *view) drawBoard(
 	boardLeftX, boardTopY int,
 ) {
 	drawableCells := view.drawableInfoModel.DrawableCells()
@@ -74,13 +71,13 @@ func (view *View) drawBoard(
 
 			x, y := boardLeftX+viewColumn, boardTopY+viewRow
 
-			view.screen.SetContent(x, y, ' ', comb, style)
-			view.screen.SetContent(x+1, y, ' ', comb, style)
+			view.tcellScreen.SetContent(x, y, ' ', comb, style)
+			view.tcellScreen.SetContent(x+1, y, ' ', comb, style)
 		}
 	}
 }
 
-func (view *View) drawTextFields(
+func (view *view) drawTextFields(
 	boardLeftX, boardTopY int,
 ) {
 	textStyle := tcell.StyleDefault.Foreground(tcell.ColorBlack).Background(tcell.ColorWhite)
@@ -113,13 +110,13 @@ func (view *View) drawTextFields(
 
 }
 
-func (view *View) Draw() {
+func (view *view) Draw() {
 
-	w, h := view.screen.Size()
+	w, h := view.tcellScreen.Size()
 
 	if w < boardWidthCells || h < boardHeightCells {
-		view.screen.Clear()
-		view.screen.Show()
+		view.tcellScreen.Clear()
+		view.tcellScreen.Show()
 		return
 	}
 
@@ -131,11 +128,11 @@ func (view *View) Draw() {
 
 	view.drawTextFields(boardLeftX, boardTopY)
 
-	view.screen.Show()
+	view.tcellScreen.Show()
 }
 
-func (view *View) emitStr(x, y int, style tcell.Style, str string) {
-	s := view.screen
+func (view *view) emitStr(x, y int, style tcell.Style, str string) {
+	s := view.tcellScreen
 
 	for _, c := range str {
 		var comb []rune
@@ -150,24 +147,12 @@ func (view *View) emitStr(x, y int, style tcell.Style, str string) {
 	}
 }
 
-func (view *View) HandleResizeEvent() {
-	view.screen.Clear()
-	view.screen.Sync()
+func (view *view) HandleResizeEvent() {
+	view.tcellScreen.Clear()
+	view.tcellScreen.Sync()
 	view.Draw()
 }
 
-func (view *View) PollEvent() tcell.Event {
-	return view.screen.PollEvent()
-}
-
-func (view *View) PostEvent(ev tcell.Event) error {
-	return view.screen.PostEvent(ev)
-}
-
-func (view *View) Finalize() {
-	view.screen.Fini()
-}
-
-func (view *View) ToggleShowVersion() {
+func (view *view) ToggleShowVersion() {
 	view.showVersion = !view.showVersion
 }
