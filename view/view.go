@@ -49,24 +49,13 @@ func (view *View) Clear() {
 	view.screen.Clear()
 }
 
-func (view *View) Draw() {
+const boardWidthCells = coord.BoardColumns * 2
+const boardHeightCells = coord.BoardRows
 
-	w, h := view.screen.Size()
-
-	const boardWidthCells = coord.BoardColumns * 2
-	const boardHeightCells = coord.BoardRows
-
-	if w < boardWidthCells || h < boardHeightCells {
-		view.screen.Clear()
-		view.screen.Show()
-		return
-	}
-
+func (view *View) drawBoard(
+	boardLeftX, boardTopY int,
+) {
 	drawableCells := view.drawableInfoModel.DrawableCells()
-
-	boardLeftX := (w - boardWidthCells) / 2
-
-	boardTopY := (h - boardHeightCells) / 2
 
 	bgStyle := tcell.StyleDefault.Foreground(tcell.ColorBlack).Background(tcell.ColorBlack)
 
@@ -89,7 +78,11 @@ func (view *View) Draw() {
 			view.screen.SetContent(x+1, y, ' ', comb, style)
 		}
 	}
+}
 
+func (view *View) drawTextFields(
+	boardLeftX, boardTopY int,
+) {
 	textStyle := tcell.StyleDefault.Foreground(tcell.ColorBlack).Background(tcell.ColorWhite)
 
 	if view.showVersion {
@@ -117,6 +110,26 @@ func (view *View) Draw() {
 			"GAME OVER",
 		)
 	}
+
+}
+
+func (view *View) Draw() {
+
+	w, h := view.screen.Size()
+
+	if w < boardWidthCells || h < boardHeightCells {
+		view.screen.Clear()
+		view.screen.Show()
+		return
+	}
+
+	boardLeftX := (w - boardWidthCells) / 2
+
+	boardTopY := (h - boardHeightCells) / 2
+
+	view.drawBoard(boardLeftX, boardTopY)
+
+	view.drawTextFields(boardLeftX, boardTopY)
 
 	view.screen.Show()
 }
