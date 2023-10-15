@@ -15,6 +15,7 @@ WASM demo: https://aaronr.digital/tetris
 - Up Arrow: rotate piece
 - Down Arrow: move piece down
 - Space Bar: drop piece
+- V: toggle showing version info
 
 ## Screenshot:
 
