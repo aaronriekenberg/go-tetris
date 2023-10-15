@@ -8,11 +8,15 @@ import (
 	_ "github.com/gdamore/tcell/v2/encoding"
 )
 
-type Screen interface {
-	tcellScreen() tcell.Screen
+type ScreenEventHandler interface {
 	PollEvent() tcell.Event
 	PostEvent(ev tcell.Event) error
 	Fini()
+}
+
+type Screen interface {
+	ScreenEventHandler
+	tcellScreen() tcell.Screen
 }
 
 type screen struct {

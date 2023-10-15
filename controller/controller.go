@@ -27,7 +27,7 @@ func Run() {
 }
 
 func runEventLoop(
-	screen view.Screen,
+	screen view.ScreenEventHandler,
 	view view.View,
 	tetrisModel model.TetrisModel,
 ) {
