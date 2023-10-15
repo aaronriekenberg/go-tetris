@@ -3,7 +3,7 @@ package model
 import (
 	"slices"
 
-	"github.com/aaronriekenberg/go-tetris/common"
+	"github.com/aaronriekenberg/go-tetris/coord"
 	"github.com/aaronriekenberg/go-tetris/pieces"
 
 	"github.com/gdamore/tcell/v2"
@@ -65,10 +65,10 @@ func newTetrisModel() *tetrisModel {
 }
 
 func (tm *tetrisModel) initializeStackCells() {
-	stackCells := make([][]tetrisModelCell, common.BoardRows)
+	stackCells := make([][]tetrisModelCell, coord.BoardRows)
 
-	for row := 0; row < common.BoardRows; row += 1 {
-		stackCells[row] = make([]tetrisModelCell, common.BoardColumns)
+	for row := 0; row < coord.BoardRows; row += 1 {
+		stackCells[row] = make([]tetrisModelCell, coord.BoardColumns)
 	}
 
 	tm.stackCells = stackCells
@@ -79,11 +79,11 @@ func (tm *tetrisModel) DrawableCells() [][]TetrisModelCell {
 		return tm.drawableCellsCache
 	}
 
-	drawableCellsCache := make([][]TetrisModelCell, common.BoardRows)
+	drawableCellsCache := make([][]TetrisModelCell, coord.BoardRows)
 
-	for row := 0; row < common.BoardRows; row += 1 {
-		drawableCellsCache[row] = make([]TetrisModelCell, common.BoardColumns)
-		for column := 0; column < common.BoardColumns; column += 1 {
+	for row := 0; row < coord.BoardRows; row += 1 {
+		drawableCellsCache[row] = make([]TetrisModelCell, coord.BoardColumns)
+		for column := 0; column < coord.BoardColumns; column += 1 {
 			drawableCellsCache[row][column] = tm.stackCells[row][column]
 		}
 	}
@@ -129,9 +129,9 @@ func (tm *tetrisModel) isPieceLocationValid(
 }
 
 func (tm *tetrisModel) addNewPiece() {
-	centerCoordinate := common.NewTetrisModelCoordinate(
+	centerCoordinate := coord.NewTetrisModelCoordinate(
 		0,
-		(common.BoardColumns/2)-1,
+		(coord.BoardColumns/2)-1,
 	)
 
 	newPiece := pieces.CreateRandomPiece(centerCoordinate)
@@ -254,7 +254,7 @@ func (tm *tetrisModel) addCurrentPieceToStack() {
 }
 
 func (tm *tetrisModel) handleFilledStackRows() {
-	row := common.BoardRows - 1
+	row := coord.BoardRows - 1
 
 	for row >= 0 {
 		rowIsFull := true
@@ -266,7 +266,7 @@ func (tm *tetrisModel) handleFilledStackRows() {
 		}
 		if rowIsFull {
 			tm.stackCells = slices.Delete(tm.stackCells, row, row+1)
-			tm.stackCells = slices.Insert(tm.stackCells, 0, make([]tetrisModelCell, common.BoardColumns))
+			tm.stackCells = slices.Insert(tm.stackCells, 0, make([]tetrisModelCell, coord.BoardColumns))
 			tm.lines += 1
 		} else {
 			row -= 1

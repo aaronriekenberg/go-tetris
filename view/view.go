@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/aaronriekenberg/go-tetris/common"
+	"github.com/aaronriekenberg/go-tetris/coord"
 	"github.com/aaronriekenberg/go-tetris/model"
 
 	"github.com/gdamore/tcell/v2"
@@ -53,16 +53,16 @@ func (view *View) Draw() {
 
 	// s.Clear()
 
-	if w < (common.BoardColumns*2) || h < common.BoardRows {
+	if w < (coord.BoardColumns*2) || h < coord.BoardRows {
 		view.screen.Show()
 		return
 	}
-	boardWidth := common.BoardColumns * 2
+	boardWidth := coord.BoardColumns * 2
 	boardLeftX := (w - boardWidth) / 2
-	boardTopY := (h - common.BoardRows) / 2
+	boardTopY := (h - coord.BoardRows) / 2
 
-	for viewColumn := 0; viewColumn < (common.BoardColumns * 2); viewColumn += 2 {
-		for viewRow := 0; viewRow < (common.BoardRows); viewRow += 1 {
+	for viewColumn := 0; viewColumn < (coord.BoardColumns * 2); viewColumn += 2 {
+		for viewRow := 0; viewRow < (coord.BoardRows); viewRow += 1 {
 			var comb []rune
 			modelRow := viewRow
 			modelColumn := (viewColumn / 2)
@@ -86,7 +86,7 @@ func (view *View) Draw() {
 
 	view.emitStr(
 		boardLeftX+(boardWidth/2)-5,
-		boardTopY+common.BoardRows+1,
+		boardTopY+coord.BoardRows+1,
 		textStyle,
 		fmt.Sprintf("Lines: % 3v", view.drawableInfoModel.Lines()),
 	)
@@ -96,7 +96,7 @@ func (view *View) Draw() {
 
 		view.emitStr(
 			boardLeftX+(boardWidth/2)-4,
-			boardTopY+common.BoardRows+3,
+			boardTopY+coord.BoardRows+3,
 			textStyle,
 			"GAME OVER",
 		)

@@ -1,4 +1,4 @@
-package common
+package coord
 
 const (
 	BoardRows    = 16

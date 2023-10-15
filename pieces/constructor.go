@@ -3,10 +3,10 @@ package pieces
 import (
 	"math/rand"
 
-	"github.com/aaronriekenberg/go-tetris/common"
+	"github.com/aaronriekenberg/go-tetris/coord"
 )
 
-type pieceConstructor = func(centerCoordinate common.TetrisModelCoordinate) TetrisPiece
+type pieceConstructor = func(centerCoordinate coord.TetrisModelCoordinate) TetrisPiece
 
 var pieceConstructors = []pieceConstructor{
 	newSquarePiece,
@@ -19,7 +19,7 @@ var pieceConstructors = []pieceConstructor{
 }
 
 func CreateRandomPiece(
-	centerCoordinate common.TetrisModelCoordinate,
+	centerCoordinate coord.TetrisModelCoordinate,
 ) TetrisPiece {
 	return pieceConstructors[rand.Intn(len(pieceConstructors))](centerCoordinate)
 }
