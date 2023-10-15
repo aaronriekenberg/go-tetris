@@ -45,20 +45,21 @@ func NewView(
 
 func (view *View) Draw() {
 
-	drawableCells := view.drawableInfoModel.DrawableCells()
-
 	w, h := view.screen.Size()
 
-	if w < (coord.BoardColumns*2) || h < coord.BoardRows {
+	const boardWidthCells = coord.BoardColumns * 2
+	const boardHeightCells = coord.BoardRows
+
+	if w < boardWidthCells || h < boardHeightCells {
 		view.screen.Clear()
 		view.screen.Show()
 		return
 	}
 
-	const boardWidthCells = coord.BoardColumns * 2
+	drawableCells := view.drawableInfoModel.DrawableCells()
+
 	boardLeftX := (w - boardWidthCells) / 2
 
-	const boardHeightCells = coord.BoardRows
 	boardTopY := (h - boardHeightCells) / 2
 
 	bgStyle := tcell.StyleDefault.Foreground(tcell.ColorBlack).Background(tcell.ColorBlack)
