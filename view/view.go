@@ -70,17 +70,14 @@ func (view *View) Draw() {
 			modelColumn := (viewColumn / 2)
 
 			modelCell := drawableCells[modelRow][modelColumn]
-			if modelCell.Occupied() {
-				fgStyle := tcell.StyleDefault.
-					Foreground(modelCell.Color()).
-					Background(modelCell.Color())
 
-				view.screen.SetContent(boardLeftX+viewColumn, boardTopY+viewRow, ' ', comb, fgStyle)
-				view.screen.SetContent(boardLeftX+viewColumn+1, boardTopY+viewRow, ' ', comb, fgStyle)
-			} else {
-				view.screen.SetContent(boardLeftX+viewColumn, boardTopY+viewRow, ' ', comb, bgStyle)
-				view.screen.SetContent(boardLeftX+viewColumn+1, boardTopY+viewRow, ' ', comb, bgStyle)
+			style := bgStyle
+			if modelCell.Occupied() {
+				style = tcell.StyleDefault.Foreground(modelCell.Color()).Background(modelCell.Color())
 			}
+
+			view.screen.SetContent(boardLeftX+viewColumn, boardTopY+viewRow, ' ', comb, style)
+			view.screen.SetContent(boardLeftX+viewColumn+1, boardTopY+viewRow, ' ', comb, style)
 		}
 	}
 
