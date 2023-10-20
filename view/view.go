@@ -26,18 +26,17 @@ type view struct {
 }
 
 func NewView(
-	screen Screen,
+	screen tcell.Screen,
 	drawableInfoModel model.DrawableInfoModel,
 ) View {
-	tcellScreen := screen.tcellScreen()
 
-	tcellScreen.SetStyle(tcell.StyleDefault.
+	screen.SetStyle(tcell.StyleDefault.
 		Foreground(tcell.ColorBlack).
 		Background(tcell.ColorWhite))
-	tcellScreen.Clear()
+	screen.Clear()
 
 	return &view{
-		tcellScreen:       tcellScreen,
+		tcellScreen:       screen,
 		drawableInfoModel: drawableInfoModel,
 	}
 }

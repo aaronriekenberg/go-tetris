@@ -14,35 +14,20 @@ type ScreenEventSource interface {
 	Fini()
 }
 
-type Screen interface {
-	ScreenEventSource
-	tcellScreen() tcell.Screen
-}
-
-type screen struct {
-	tcell.Screen
-}
-
-func (s *screen) tcellScreen() tcell.Screen {
-	return s
-}
-
-func NewScreen() Screen {
+func NewScreen() tcell.Screen {
 	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
 
-	tcellScreen, e := tcell.NewScreen()
+	screen, e := tcell.NewScreen()
 
 	if e != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", e)
 		os.Exit(1)
 	}
 
-	if e = tcellScreen.Init(); e != nil {
+	if e = screen.Init(); e != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", e)
 		os.Exit(1)
 	}
 
-	return &screen{
-		Screen: tcellScreen,
-	}
+	return screen
 }
