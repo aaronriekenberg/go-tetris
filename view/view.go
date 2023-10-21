@@ -2,7 +2,6 @@ package view
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/aaronriekenberg/go-tetris/coordinate"
 	"github.com/aaronriekenberg/go-tetris/model"
@@ -19,15 +18,13 @@ type View interface {
 	ToggleShowVersion()
 	HandleButton1PressEvent(
 		x, y int,
-		eventTime time.Time,
 	)
 }
 
 type view struct {
-	tcellScreen                 tcell.Screen
-	model                       model.TetrisModel
-	showVersion                 bool
-	lastMoveDownButtonEventTime time.Time
+	tcellScreen tcell.Screen
+	model       model.TetrisModel
+	showVersion bool
 }
 
 func NewView(
@@ -160,7 +157,6 @@ func (view *view) ToggleShowVersion() {
 
 func (view *view) HandleButton1PressEvent(
 	x, y int,
-	eventTime time.Time,
 ) {
 	w, h := view.tcellScreen.Size()
 
@@ -195,14 +191,8 @@ func (view *view) HandleButton1PressEvent(
 	}
 
 	if (boardBottomY - y) <= 5 {
-		if time.Since(view.lastMoveDownButtonEventTime) <= 200*time.Millisecond {
-			// double click
-			view.model.DropCurrentPiece()
-		} else {
-			view.model.MoveCurrentPieceDown()
-		}
+		view.model.MoveCurrentPieceDown()
 		view.Draw()
-		view.lastMoveDownButtonEventTime = eventTime
 		return
 	}
 

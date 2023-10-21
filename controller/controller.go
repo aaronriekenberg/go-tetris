@@ -27,6 +27,11 @@ func Run() {
 	)
 }
 
+type mouseEventInfo struct {
+	x int
+	y int
+}
+
 func runEventLoop(
 	eventSource view.ScreenEventSource,
 	view view.View,
@@ -34,7 +39,7 @@ func runEventLoop(
 ) {
 	runningInWASM := runtime.GOARCH == "wasm"
 
-	periodicUpdateTicker := time.NewTicker(500 * time.Millisecond)
+	periodicUpdateTicker := time.NewTicker(100 * time.Millisecond)
 	go func() {
 		for {
 			<-periodicUpdateTicker.C
@@ -42,6 +47,8 @@ func runEventLoop(
 			eventSource.PostEvent(tcell.NewEventInterrupt(periodicUpdateInterruptCustomEvent{}))
 		}
 	}()
+
+	var repeatingMouseEvent *mouseEventInfo
 
 	done := false
 
@@ -60,14 +67,22 @@ func runEventLoop(
 	}
 	defer quit()
 
+	lastModelUpdate := time.Now()
+
 	for !done {
 		ev := eventSource.PollEvent()
 		switch ev := ev.(type) {
 		case *tcell.EventInterrupt:
 			switch ev.Data().(type) {
 			case periodicUpdateInterruptCustomEvent:
-				tetrisModel.PeriodicUpdate()
-				view.Draw()
+				if repeatingMouseEvent != nil {
+					view.HandleButton1PressEvent(repeatingMouseEvent.x, repeatingMouseEvent.y)
+				}
+				if time.Since(lastModelUpdate) >= 500*time.Millisecond {
+					lastModelUpdate = time.Now()
+					tetrisModel.PeriodicUpdate()
+					view.Draw()
+				}
 			}
 		case *tcell.EventKey:
 			switch ev.Key() {
@@ -108,7 +123,13 @@ func runEventLoop(
 			buttonMask := ev.Buttons()
 			if (buttonMask & tcell.Button1) != 0 {
 				x, y := ev.Position()
-				view.HandleButton1PressEvent(x, y, ev.When())
+				repeatingMouseEvent = &mouseEventInfo{
+					x: x,
+					y: y,
+				}
+				view.HandleButton1PressEvent(x, y)
+			} else {
+				repeatingMouseEvent = nil
 			}
 		case *tcell.EventResize:
 			view.HandleResizeEvent()
