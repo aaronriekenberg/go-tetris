@@ -184,18 +184,6 @@ func (view *view) HandleButton1PressEvent(
 		return
 	}
 
-	if (x - boardLeftX) <= 4 {
-		view.model.MoveCurrentPieceLeft()
-		view.Draw()
-		return
-	}
-
-	if (boardRightX - x) <= 4 {
-		view.model.MoveCurrentPieceRight()
-		view.Draw()
-		return
-	}
-
 	if (y - boardTopY) <= 5 {
 		view.model.RotateCurrentPiece()
 		view.Draw()
@@ -213,4 +201,17 @@ func (view *view) HandleButton1PressEvent(
 		view.lastMoveDownButtonEventTime = eventTime
 		return
 	}
+
+	if (x - boardLeftX) <= 8 {
+		view.model.MoveCurrentPieceLeft()
+		view.Draw()
+		return
+	}
+
+	if (boardRightX - x) <= 8 {
+		view.model.MoveCurrentPieceRight()
+		view.Draw()
+		return
+	}
+
 }
