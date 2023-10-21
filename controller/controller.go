@@ -88,14 +88,12 @@ func runEventLoop(
 					quit()
 				case 'r':
 					tetrisModel.Restart()
-					view.Clear()
 					view.Draw()
 				case ' ':
 					tetrisModel.DropCurrentPiece()
 					view.Draw()
 				case 'v':
 					view.ToggleShowVersion()
-					view.Clear()
 					view.Draw()
 				}
 			}

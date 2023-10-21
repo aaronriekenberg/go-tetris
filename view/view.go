@@ -13,7 +13,6 @@ import (
 )
 
 type View interface {
-	Clear()
 	Draw()
 	HandleResizeEvent()
 	ToggleShowVersion()
@@ -39,10 +38,6 @@ func NewView(
 		tcellScreen:       screen,
 		drawableInfoModel: drawableInfoModel,
 	}
-}
-
-func (view *view) Clear() {
-	view.tcellScreen.Clear()
 }
 
 const boardWidthCells = coordinate.BoardColumns * 2
@@ -111,10 +106,11 @@ func (view *view) drawTextFields(
 
 func (view *view) Draw() {
 
+	view.tcellScreen.Clear()
+
 	w, h := view.tcellScreen.Size()
 
 	if w < boardWidthCells || h < boardHeightCells {
-		view.tcellScreen.Clear()
 		view.tcellScreen.Show()
 		return
 	}
