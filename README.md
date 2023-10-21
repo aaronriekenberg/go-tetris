@@ -19,5 +19,8 @@ WASM demo: https://aaronr.digital/tetris
 
 ## Screenshots:
 
+Native app in iTerm2:
 ![go-tetris-native](go-tetris-native.png)
+
+WASM in Chrome:
 ![go-tetris-wasm](go-tetris-wasm.png)
