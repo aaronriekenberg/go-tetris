@@ -180,7 +180,11 @@ func (view *view) HandleButton1PressEvent(
 		return
 	}
 
-	if (y < boardTopY) || (y > boardBottomY) {
+	if y < boardTopY {
+		view.ToggleShowVersion()
+		view.Draw()
+		return
+	} else if y > boardBottomY {
 		return
 	}
 
