@@ -14,6 +14,8 @@ type ScreenEventSource interface {
 	Fini()
 }
 
+var _ ScreenEventSource = (tcell.Screen)(nil)
+
 func NewScreen() tcell.Screen {
 	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
 
