@@ -184,25 +184,25 @@ func (view *view) HandleButton1PressEvent(
 		return
 	}
 
-	if (x - boardLeftX) <= 3 {
+	if (x - boardLeftX) <= 4 {
 		view.model.MoveCurrentPieceLeft()
 		view.Draw()
 		return
 	}
 
-	if (boardRightX - x) <= 3 {
+	if (boardRightX - x) <= 4 {
 		view.model.MoveCurrentPieceRight()
 		view.Draw()
 		return
 	}
 
-	if (y - boardTopY) <= 3 {
+	if (y - boardTopY) <= 5 {
 		view.model.RotateCurrentPiece()
 		view.Draw()
 		return
 	}
 
-	if (boardBottomY - y) <= 3 {
+	if (boardBottomY - y) <= 5 {
 		if time.Since(view.lastMoveDownButtonEventTime) <= 200*time.Millisecond {
 			// double click
 			view.model.DropCurrentPiece()
