@@ -202,13 +202,11 @@ func (view *view) HandleButton1PressEvent(
 		return
 	}
 
-	if (x - boardLeftX) <= 8 {
+	if (x - boardLeftX) < (boardRightX - x) {
 		view.model.MoveCurrentPieceLeft()
 		view.Draw()
 		return
-	}
-
-	if (boardRightX - x) <= 8 {
+	} else {
 		view.model.MoveCurrentPieceRight()
 		view.Draw()
 		return
