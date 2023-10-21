@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"runtime"
 	"time"
 
 	"github.com/aaronriekenberg/go-tetris/model"
@@ -31,6 +32,8 @@ func runEventLoop(
 	view view.View,
 	tetrisModel model.TetrisModel,
 ) {
+	runningInWASM := runtime.GOARCH == "wasm"
+
 	periodicUpdateTicker := time.NewTicker(500 * time.Millisecond)
 	go func() {
 		for {
@@ -69,7 +72,9 @@ func runEventLoop(
 		case *tcell.EventKey:
 			switch ev.Key() {
 			case tcell.KeyEscape:
-				quit()
+				if !runningInWASM {
+					quit()
+				}
 			case tcell.KeyLeft:
 				tetrisModel.MoveCurrentPieceLeft()
 				view.Draw()
@@ -85,7 +90,9 @@ func runEventLoop(
 			case tcell.KeyRune:
 				switch ev.Rune() {
 				case 'q':
-					quit()
+					if !runningInWASM {
+						quit()
+					}
 				case 'r':
 					tetrisModel.Restart()
 					view.Draw()
