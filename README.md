@@ -8,7 +8,7 @@ WASM demo: https://aaronr.digital/tetris
 
 ## Keys:
 
-- Escape, Q: quit
+- Escape, Q: quit (non-WASM only)
 - R: restart
 - Left Arrow: move piece left
 - Right Arrow: move piece right
