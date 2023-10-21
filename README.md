@@ -19,4 +19,5 @@ WASM demo: https://aaronr.digital/tetris
 
 ## Screenshot:
 
-![go-tetris](go-tetris.png)
+![go-tetris-native](go-tetris-native.png)
+![go-tetris-wasm](go-tetris-wasm.png)
