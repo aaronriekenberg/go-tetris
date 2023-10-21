@@ -17,7 +17,7 @@ WASM demo: https://aaronr.digital/tetris
 - Space Bar: drop piece
 - V: toggle showing version info
 
-## Screenshot:
+## Screenshots:
 
 ![go-tetris-native](go-tetris-native.png)
 ![go-tetris-wasm](go-tetris-wasm.png)
