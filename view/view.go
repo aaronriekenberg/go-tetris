@@ -2,6 +2,7 @@ package view
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/aaronriekenberg/go-tetris/coordinate"
 	"github.com/aaronriekenberg/go-tetris/model"
@@ -16,17 +17,22 @@ type View interface {
 	Draw()
 	HandleResizeEvent()
 	ToggleShowVersion()
+	HandleButton1PressEvent(
+		x, y int,
+		eventTime time.Time,
+	)
 }
 
 type view struct {
-	tcellScreen       tcell.Screen
-	drawableInfoModel model.DrawableInfoModel
-	showVersion       bool
+	tcellScreen                 tcell.Screen
+	model                       model.TetrisModel
+	showVersion                 bool
+	lastMoveDownButtonEventTime time.Time
 }
 
 func NewView(
 	screen tcell.Screen,
-	drawableInfoModel model.DrawableInfoModel,
+	model model.TetrisModel,
 ) View {
 
 	screen.SetStyle(tcell.StyleDefault.
@@ -35,8 +41,8 @@ func NewView(
 	screen.Clear()
 
 	return &view{
-		tcellScreen:       screen,
-		drawableInfoModel: drawableInfoModel,
+		tcellScreen: screen,
+		model:       model,
 	}
 }
 
@@ -46,7 +52,7 @@ const boardHeightCells = coordinate.BoardRows
 func (view *view) drawBoard(
 	boardLeftX, boardTopY int,
 ) {
-	drawableCells := view.drawableInfoModel.DrawableCells()
+	drawableCells := view.model.DrawableCells()
 
 	bgStyle := tcell.StyleDefault.Foreground(tcell.ColorBlack).Background(tcell.ColorBlack)
 
@@ -88,10 +94,10 @@ func (view *view) drawTextFields(
 		boardLeftX+(boardWidthCells/2)-5,
 		boardTopY+boardHeightCells+1,
 		textStyle,
-		fmt.Sprintf("Lines: % 3v", view.drawableInfoModel.Lines()),
+		fmt.Sprintf("Lines: % 3v", view.model.Lines()),
 	)
 
-	if view.drawableInfoModel.GameOver() {
+	if view.model.GameOver() {
 		textStyle = tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorBlack)
 
 		view.emitStr(
@@ -150,4 +156,61 @@ func (view *view) HandleResizeEvent() {
 
 func (view *view) ToggleShowVersion() {
 	view.showVersion = !view.showVersion
+}
+
+func (view *view) HandleButton1PressEvent(
+	x, y int,
+	eventTime time.Time,
+) {
+	w, h := view.tcellScreen.Size()
+
+	if w < boardWidthCells || h < boardHeightCells {
+		return
+	}
+
+	boardLeftX := (w - boardWidthCells) / 2
+
+	boardRightX := boardLeftX + boardWidthCells
+
+	boardTopY := (h - boardHeightCells) / 2
+
+	boardBottomY := boardTopY + boardHeightCells
+
+	if (x < boardLeftX) || (x > boardRightX) {
+		return
+	}
+
+	if (y < boardTopY) || (y > boardBottomY) {
+		return
+	}
+
+	if (x - boardLeftX) <= 3 {
+		view.model.MoveCurrentPieceLeft()
+		view.Draw()
+		return
+	}
+
+	if (boardRightX - x) <= 3 {
+		view.model.MoveCurrentPieceRight()
+		view.Draw()
+		return
+	}
+
+	if (y - boardTopY) <= 3 {
+		view.model.RotateCurrentPiece()
+		view.Draw()
+		return
+	}
+
+	if (boardBottomY - y) <= 3 {
+		if time.Since(view.lastMoveDownButtonEventTime) <= 200*time.Millisecond {
+			// double click
+			view.model.DropCurrentPiece()
+		} else {
+			view.model.MoveCurrentPieceDown()
+		}
+		view.Draw()
+		view.lastMoveDownButtonEventTime = eventTime
+		return
+	}
 }

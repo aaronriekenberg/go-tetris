@@ -31,5 +31,7 @@ func NewScreen() tcell.Screen {
 		os.Exit(1)
 	}
 
+	screen.EnableMouse()
+
 	return screen
 }

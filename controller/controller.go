@@ -104,6 +104,12 @@ func runEventLoop(
 					view.Draw()
 				}
 			}
+		case *tcell.EventMouse:
+			buttonMask := ev.Buttons()
+			if (buttonMask & tcell.Button1) != 0 {
+				x, y := ev.Position()
+				view.HandleButton1PressEvent(x, y, ev.When())
+			}
 		case *tcell.EventResize:
 			view.HandleResizeEvent()
 		}
