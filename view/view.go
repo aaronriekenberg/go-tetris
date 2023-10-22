@@ -180,14 +180,6 @@ func (view *view) HandleButton1PressEvent(
 		return
 	}
 
-	if y < boardTopY {
-		view.ToggleShowVersion()
-		view.Draw()
-		return
-	} else if y > boardBottomY {
-		return
-	}
-
 	if (y - boardTopY) <= 5 {
 		view.model.RotateCurrentPiece()
 		view.Draw()
