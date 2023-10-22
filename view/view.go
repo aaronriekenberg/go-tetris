@@ -43,7 +43,7 @@ func NewView(
 ) View {
 
 	if utils.RunningInWASM() {
-		screen.SetSize(boardWidthCells*2, boardHeightCells*2)
+		screen.SetSize(40, 30)
 	}
 
 	screen.SetStyle(tcell.StyleDefault.
