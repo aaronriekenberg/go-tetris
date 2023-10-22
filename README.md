@@ -22,8 +22,8 @@ WASM demo: https://aaronr.digital/tetris
 - Click above board: rotate piece
 - Click below board: move piece down
 - Double click below board: drop piece
-- Click left of board: move current piece left
-- Click right of board: move current pice right
+- Click near left of board: move current piece left
+- Click near right of board: move current pice right
 
 ## Screenshots:
 
