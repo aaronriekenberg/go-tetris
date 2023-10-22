@@ -19,9 +19,9 @@ WASM demo: https://aaronr.digital/tetris
 
 ## Finger/Mouse Events:
 
-- Click in top three rows or above board: rotate piece
-- Click in bottom three rows or below board: move piece down
-- Double click in bottom three rows or below board: move piece down
+- Click top three rows or above board: rotate piece
+- Click bottom three rows or below board: move piece down
+- Double click in bottom three rows or below board: drop piece
 - Click near left side of board: move current piece left
 - Click near right side of board: move current pice right
 
