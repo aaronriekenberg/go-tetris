@@ -2,6 +2,7 @@ package view
 
 import (
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/aaronriekenberg/go-tetris/coordinate"
@@ -176,17 +177,17 @@ func (view *view) HandleButton1PressEvent(
 
 	boardBottomY := boardTopY + boardHeightCells
 
-	if (x < boardLeftX) || (x > boardRightX) {
+	if (x < (boardLeftX - 10)) || (x > (boardRightX + 10)) {
 		return
 	}
 
-	if (y - boardTopY) <= 5 {
+	if (y - boardTopY) <= 3 {
 		view.model.RotateCurrentPiece()
 		view.Draw()
 		return
 	}
 
-	if (boardBottomY - y) <= 5 {
+	if (boardBottomY - y) <= 3 {
 		if time.Since(view.lastMoveDownButtonEventTime) <= 200*time.Millisecond {
 			// double click
 			view.model.DropCurrentPiece()
@@ -198,7 +199,7 @@ func (view *view) HandleButton1PressEvent(
 		return
 	}
 
-	if (x - boardLeftX) < (boardRightX - x) {
+	if math.Abs(float64(x-boardLeftX)) < math.Abs(float64(x-boardRightX)) {
 		view.model.MoveCurrentPieceLeft()
 		view.Draw()
 		return
