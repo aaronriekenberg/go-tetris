@@ -7,11 +7,17 @@ import (
 
 	"github.com/aaronriekenberg/go-tetris/coordinate"
 	"github.com/aaronriekenberg/go-tetris/model"
+	"github.com/aaronriekenberg/go-tetris/utils"
 	"github.com/aaronriekenberg/go-tetris/version"
 
 	"github.com/gdamore/tcell/v2"
 
 	"github.com/mattn/go-runewidth"
+)
+
+const (
+	boardWidthCells  = coordinate.BoardColumns * 2
+	boardHeightCells = coordinate.BoardRows
 )
 
 type View interface {
@@ -36,6 +42,10 @@ func NewView(
 	model model.TetrisModel,
 ) View {
 
+	if utils.RunningInWASM() {
+		screen.SetSize(boardWidthCells*2, boardHeightCells*2)
+	}
+
 	screen.SetStyle(tcell.StyleDefault.
 		Foreground(tcell.ColorBlack).
 		Background(tcell.ColorWhite))
@@ -46,9 +56,6 @@ func NewView(
 		model:       model,
 	}
 }
-
-const boardWidthCells = coordinate.BoardColumns * 2
-const boardHeightCells = coordinate.BoardRows
 
 func (view *view) drawBoard(
 	boardLeftX, boardTopY int,

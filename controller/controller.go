@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"runtime"
 	"time"
 
 	"github.com/aaronriekenberg/go-tetris/model"
+	"github.com/aaronriekenberg/go-tetris/utils"
 	"github.com/aaronriekenberg/go-tetris/view"
 
 	"github.com/gdamore/tcell/v2"
@@ -32,7 +32,7 @@ func runEventLoop(
 	view view.View,
 	tetrisModel model.TetrisModel,
 ) {
-	runningInWASM := runtime.GOARCH == "wasm"
+	runningInWASM := utils.RunningInWASM()
 
 	periodicUpdateTicker := time.NewTicker(500 * time.Millisecond)
 	go func() {
