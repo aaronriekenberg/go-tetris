@@ -177,38 +177,30 @@ func (view *view) HandleButton1PressEvent(
 
 	boardLeftX := (w - boardWidthCells) / 2
 
-	boardRightX := boardLeftX + boardWidthCells
+	boardRightX := boardLeftX + boardWidthCells - 1
 
 	boardTopY := (h - boardHeightCells) / 2
 
-	boardBottomY := boardTopY + boardHeightCells
+	boardBottomY := boardTopY + boardHeightCells - 1
 
-	if y < boardTopY {
+	switch {
+	case y < boardTopY:
 		view.model.RotateCurrentPiece()
-		view.Draw()
-		return
-	}
 
-	if y > boardBottomY {
+	case y > boardBottomY:
 		if time.Since(view.lastMoveDownButtonEventTime) <= 200*time.Millisecond {
 			// double click
 			view.model.DropCurrentPiece()
 		} else {
 			view.model.MoveCurrentPieceDown()
 		}
-		view.Draw()
 		view.lastMoveDownButtonEventTime = eventTime
-		return
-	}
 
-	if utils.IntegerAbs(x-boardLeftX) < utils.IntegerAbs(x-boardRightX) {
+	case utils.IntegerAbs(x-boardLeftX) < utils.IntegerAbs(x-boardRightX):
 		view.model.MoveCurrentPieceLeft()
-		view.Draw()
-		return
-	} else {
+
+	default:
 		view.model.MoveCurrentPieceRight()
-		view.Draw()
-		return
 	}
 
 }
