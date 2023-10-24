@@ -177,7 +177,7 @@ func (view *view) HandleButton1PressEvent(
 
 	boardLeftX := (w - boardWidthCells) / 2
 
-	boardRightX := boardLeftX + boardWidthCells - 1
+	boardRightX := boardLeftX + boardWidthCells - 2
 
 	boardTopY := (h - boardHeightCells) / 2
 
