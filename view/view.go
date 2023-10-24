@@ -2,7 +2,6 @@ package view
 
 import (
 	"fmt"
-	"math"
 	"time"
 
 	"github.com/aaronriekenberg/go-tetris/coordinate"
@@ -202,7 +201,7 @@ func (view *view) HandleButton1PressEvent(
 		return
 	}
 
-	if math.Abs(float64(x-boardLeftX)) < math.Abs(float64(x-boardRightX)) {
+	if utils.IntegerAbs(x-boardLeftX) < utils.IntegerAbs(x-boardRightX) {
 		view.model.MoveCurrentPieceLeft()
 		view.Draw()
 		return
