@@ -220,5 +220,4 @@ func (view *view) HandleButton1PressEvent(
 	}
 
 	view.Draw()
-
 }
