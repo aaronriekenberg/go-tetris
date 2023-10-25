@@ -65,10 +65,10 @@ func newTetrisModel() *tetrisModel {
 }
 
 func (tm *tetrisModel) initializeStackCells() {
-	stackCells := make([][]tetrisModelCell, coordinate.BoardRows)
+	stackCells := make([][]tetrisModelCell, coordinate.BoardModelRows)
 
-	for row := 0; row < coordinate.BoardRows; row += 1 {
-		stackCells[row] = make([]tetrisModelCell, coordinate.BoardColumns)
+	for row := 0; row < coordinate.BoardModelRows; row += 1 {
+		stackCells[row] = make([]tetrisModelCell, coordinate.BoardModelColumns)
 	}
 
 	tm.stackCells = stackCells
@@ -79,11 +79,11 @@ func (tm *tetrisModel) DrawableCells() [][]TetrisModelCell {
 		return tm.drawableCellsCache
 	}
 
-	drawableCellsCache := make([][]TetrisModelCell, coordinate.BoardRows)
+	drawableCellsCache := make([][]TetrisModelCell, coordinate.BoardModelRows)
 
-	for row := 0; row < coordinate.BoardRows; row += 1 {
-		drawableCellsCache[row] = make([]TetrisModelCell, coordinate.BoardColumns)
-		for column := 0; column < coordinate.BoardColumns; column += 1 {
+	for row := 0; row < coordinate.BoardModelRows; row += 1 {
+		drawableCellsCache[row] = make([]TetrisModelCell, coordinate.BoardModelColumns)
+		for column := 0; column < coordinate.BoardModelColumns; column += 1 {
 			drawableCellsCache[row][column] = tm.stackCells[row][column]
 		}
 	}
@@ -131,7 +131,7 @@ func (tm *tetrisModel) isPieceLocationValid(
 func (tm *tetrisModel) addNewPiece() {
 	centerCoordinate := coordinate.NewTetrisModelCoordinate(
 		0,
-		(coordinate.BoardColumns/2)-1,
+		(coordinate.BoardModelColumns/2)-1,
 	)
 
 	newPiece := pieces.CreateRandomPiece(centerCoordinate)
@@ -254,7 +254,7 @@ func (tm *tetrisModel) addCurrentPieceToStack() {
 }
 
 func (tm *tetrisModel) handleFilledStackRows() {
-	row := coordinate.BoardRows - 1
+	row := coordinate.BoardModelRows - 1
 
 	for row >= 0 {
 		rowIsFull := true
@@ -266,7 +266,7 @@ func (tm *tetrisModel) handleFilledStackRows() {
 		}
 		if rowIsFull {
 			tm.stackCells = slices.Delete(tm.stackCells, row, row+1)
-			tm.stackCells = slices.Insert(tm.stackCells, 0, make([]tetrisModelCell, coordinate.BoardColumns))
+			tm.stackCells = slices.Insert(tm.stackCells, 0, make([]tetrisModelCell, coordinate.BoardModelColumns))
 			tm.lines += 1
 		} else {
 			row -= 1

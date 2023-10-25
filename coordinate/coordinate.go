@@ -1,8 +1,8 @@
 package coordinate
 
 const (
-	BoardRows    = 16
-	BoardColumns = 12
+	BoardModelRows    = 16
+	BoardModelColumns = 12
 )
 
 // (0, 0) is topmost and leftmost cell
@@ -21,7 +21,7 @@ func NewTetrisModelCoordinate(
 }
 
 func (tmc TetrisModelCoordinate) Valid() bool {
-	return (tmc.row >= 0) && (tmc.row < BoardRows) && (tmc.column >= 0) && (tmc.column < BoardColumns)
+	return (tmc.row >= 0) && (tmc.row < BoardModelRows) && (tmc.column >= 0) && (tmc.column < BoardModelColumns)
 }
 
 func (tmc TetrisModelCoordinate) AddRows(delta int) TetrisModelCoordinate {

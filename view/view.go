@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	boardWidthCells  = coordinate.BoardColumns * 2
-	boardHeightCells = coordinate.BoardRows
+	boardWidthCells  = coordinate.BoardModelColumns * 2
+	boardHeightCells = coordinate.BoardModelRows
 )
 
 type View interface {
