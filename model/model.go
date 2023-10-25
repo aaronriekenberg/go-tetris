@@ -244,8 +244,9 @@ func (tm *tetrisModel) addCurrentPieceToStack() {
 	currentPiece := tm.currentPiece
 	if currentPiece != nil {
 		for _, coordinate := range currentPiece.Coordinates() {
-			tm.stackCells[coordinate.Row()][coordinate.Column()].occupied = true
-			tm.stackCells[coordinate.Row()][coordinate.Column()].color = currentPiece.Color()
+			stackCell := &tm.stackCells[coordinate.Row()][coordinate.Column()]
+			stackCell.occupied = true
+			stackCell.color = currentPiece.Color()
 		}
 	}
 	tm.currentPiece = nil
