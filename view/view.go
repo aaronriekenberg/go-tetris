@@ -20,7 +20,6 @@ const (
 )
 
 type viewBoardCoordinates struct {
-	valid        bool
 	boardLeftX   int
 	boardRightX  int
 	boardTopY    int
@@ -64,15 +63,15 @@ func NewView(
 	}
 }
 
-func (view *view) viewBoardCoordinates() (result viewBoardCoordinates) {
+func (view *view) viewBoardCoordinates() (result viewBoardCoordinates, ok bool) {
 	w, h := view.tcellScreen.Size()
 
 	if w < boardWidthViewCells || h < boardHeightViewCells {
-		result.valid = false
+		ok = false
 		return
 	}
 
-	result.valid = true
+	ok = true
 
 	result.boardLeftX = (w - boardWidthViewCells) / 2
 
@@ -150,8 +149,8 @@ func (view *view) Draw() {
 
 	view.tcellScreen.Clear()
 
-	viewBoardCoordinates := view.viewBoardCoordinates()
-	if !viewBoardCoordinates.valid {
+	viewBoardCoordinates, ok := view.viewBoardCoordinates()
+	if !ok {
 		return
 	}
 
@@ -194,8 +193,8 @@ func (view *view) HandleButton1PressEvent(
 	x, y int,
 	eventTime time.Time,
 ) {
-	viewBoardCoordinates := view.viewBoardCoordinates()
-	if !viewBoardCoordinates.valid {
+	viewBoardCoordinates, ok := view.viewBoardCoordinates()
+	if !ok {
 		return
 	}
 
