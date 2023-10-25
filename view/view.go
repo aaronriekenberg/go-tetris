@@ -15,9 +15,17 @@ import (
 )
 
 const (
-	boardWidthCells  = coordinate.BoardModelColumns * 2
-	boardHeightCells = coordinate.BoardModelRows
+	boardWidthViewCells  = coordinate.BoardModelColumns * 2
+	boardHeightViewCells = coordinate.BoardModelRows
 )
+
+type viewBoardCoordinates struct {
+	valid        bool
+	boardLeftX   int
+	boardRightX  int
+	boardTopY    int
+	boardBottomY int
+}
 
 type View interface {
 	Draw()
@@ -56,15 +64,36 @@ func NewView(
 	}
 }
 
+func (view *view) viewBoardCoordinates() (result viewBoardCoordinates) {
+	w, h := view.tcellScreen.Size()
+
+	if w < boardWidthViewCells || h < boardHeightViewCells {
+		result.valid = false
+		return
+	}
+
+	result.valid = true
+
+	result.boardLeftX = (w - boardWidthViewCells) / 2
+
+	result.boardRightX = result.boardLeftX + boardWidthViewCells - 2
+
+	result.boardTopY = (h - boardHeightViewCells) / 2
+
+	result.boardBottomY = result.boardTopY + boardHeightViewCells - 1
+
+	return
+}
+
 func (view *view) drawBoard(
-	boardLeftX, boardTopY int,
+	viewBoardCoordinates viewBoardCoordinates,
 ) {
 	drawableCells := view.model.DrawableCells()
 
 	bgStyle := tcell.StyleDefault.Foreground(tcell.ColorBlack).Background(tcell.ColorBlack)
 
-	for viewColumn := 0; viewColumn < boardWidthCells; viewColumn += 2 {
-		for viewRow := 0; viewRow < boardHeightCells; viewRow += 1 {
+	for viewColumn := 0; viewColumn < boardWidthViewCells; viewColumn += 2 {
+		for viewRow := 0; viewRow < boardHeightViewCells; viewRow += 1 {
 			var comb []rune
 			modelRow := viewRow
 			modelColumn := (viewColumn / 2)
@@ -76,7 +105,7 @@ func (view *view) drawBoard(
 				style = tcell.StyleDefault.Foreground(modelCell.Color()).Background(modelCell.Color())
 			}
 
-			x, y := boardLeftX+viewColumn, boardTopY+viewRow
+			x, y := viewBoardCoordinates.boardLeftX+viewColumn, viewBoardCoordinates.boardTopY+viewRow
 
 			view.tcellScreen.SetContent(x, y, ' ', comb, style)
 			view.tcellScreen.SetContent(x+1, y, ' ', comb, style)
@@ -85,7 +114,7 @@ func (view *view) drawBoard(
 }
 
 func (view *view) drawTextFields(
-	boardLeftX, boardTopY int,
+	viewBoardCoordinates viewBoardCoordinates,
 ) {
 	textStyle := tcell.StyleDefault.Foreground(tcell.ColorBlack).Background(tcell.ColorWhite)
 
@@ -98,8 +127,8 @@ func (view *view) drawTextFields(
 	}
 
 	view.emitStr(
-		boardLeftX+(boardWidthCells/2)-5,
-		boardTopY+boardHeightCells+1,
+		viewBoardCoordinates.boardLeftX+(boardWidthViewCells/2)-5,
+		viewBoardCoordinates.boardTopY+boardHeightViewCells+1,
 		textStyle,
 		fmt.Sprintf("Lines: % 3v", view.model.Lines()),
 	)
@@ -108,8 +137,8 @@ func (view *view) drawTextFields(
 		textStyle = tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorBlack)
 
 		view.emitStr(
-			boardLeftX+(boardWidthCells/2)-4,
-			boardTopY+boardHeightCells+3,
+			viewBoardCoordinates.boardLeftX+(boardWidthViewCells/2)-4,
+			viewBoardCoordinates.boardTopY+boardHeightViewCells+3,
 			textStyle,
 			"GAME OVER",
 		)
@@ -121,20 +150,14 @@ func (view *view) Draw() {
 
 	view.tcellScreen.Clear()
 
-	w, h := view.tcellScreen.Size()
-
-	if w < boardWidthCells || h < boardHeightCells {
-		view.tcellScreen.Show()
+	viewBoardCoordinates := view.viewBoardCoordinates()
+	if !viewBoardCoordinates.valid {
 		return
 	}
 
-	boardLeftX := (w - boardWidthCells) / 2
+	view.drawBoard(viewBoardCoordinates)
 
-	boardTopY := (h - boardHeightCells) / 2
-
-	view.drawBoard(boardLeftX, boardTopY)
-
-	view.drawTextFields(boardLeftX, boardTopY)
+	view.drawTextFields(viewBoardCoordinates)
 
 	view.tcellScreen.Show()
 }
@@ -169,25 +192,16 @@ func (view *view) HandleButton1PressEvent(
 	x, y int,
 	eventTime time.Time,
 ) {
-	w, h := view.tcellScreen.Size()
-
-	if w < boardWidthCells || h < boardHeightCells {
+	viewBoardCoordinates := view.viewBoardCoordinates()
+	if !viewBoardCoordinates.valid {
 		return
 	}
 
-	boardLeftX := (w - boardWidthCells) / 2
-
-	boardRightX := boardLeftX + boardWidthCells - 2
-
-	boardTopY := (h - boardHeightCells) / 2
-
-	boardBottomY := boardTopY + boardHeightCells - 1
-
 	switch {
-	case y < boardTopY:
+	case y < viewBoardCoordinates.boardTopY:
 		view.model.RotateCurrentPiece()
 
-	case y > boardBottomY:
+	case y > viewBoardCoordinates.boardBottomY:
 		if time.Since(view.lastMoveDownButtonEventTime) <= 200*time.Millisecond {
 			// double click
 			view.model.DropCurrentPiece()
@@ -196,7 +210,7 @@ func (view *view) HandleButton1PressEvent(
 		}
 		view.lastMoveDownButtonEventTime = eventTime
 
-	case utils.Abs(x-boardLeftX) < utils.Abs(x-boardRightX):
+	case utils.Abs(x-viewBoardCoordinates.boardLeftX) < utils.Abs(x-viewBoardCoordinates.boardRightX):
 		view.model.MoveCurrentPieceLeft()
 
 	default:
