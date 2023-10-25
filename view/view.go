@@ -186,6 +186,8 @@ func (view *view) HandleResizeEvent() {
 
 func (view *view) ToggleShowVersion() {
 	view.showVersion = !view.showVersion
+
+	view.Draw()
 }
 
 func (view *view) HandleButton1PressEvent(
@@ -216,5 +218,7 @@ func (view *view) HandleButton1PressEvent(
 	default:
 		view.model.MoveCurrentPieceRight()
 	}
+
+	view.Draw()
 
 }
