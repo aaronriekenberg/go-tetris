@@ -34,7 +34,7 @@ jobs:
         uses: actions/configure-pages@v3
       - name: Go build
         run: |
-          echo "matrix.os = ${{ matrix.os }}"
+          echo "before go build"
           GOOS=js GOARCH=wasm go build -o wasm/tetris.wasm
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
