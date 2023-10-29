@@ -44,8 +44,9 @@ jobs:
           ls -latrh wasm
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
+        with:
+          path: wasm
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
-        with:
-          path: "wasm"
+      
