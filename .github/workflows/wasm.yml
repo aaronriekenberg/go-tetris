@@ -1,4 +1,4 @@
-name: Deploy content to Pages
+name: Build for wasm and deploy to github pages
 
 on:
   # Runs on pushes targeting the default branch
