@@ -40,13 +40,10 @@ jobs:
         run: |
           echo "before go build"
           go version
-          GOOS=js GOARCH=wasm go build -o wasm/tetris.wasm
-          ls -latrh wasm
+          GOOS=js GOARCH=wasm go build -o _site/tetris.wasm
+          ls -latrh _site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
-        with:
-          # Upload wasm directory
-          path: './wasm/*'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
