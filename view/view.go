@@ -203,7 +203,7 @@ func (view *view) HandleButton1PressEvent(
 		view.model.RotateCurrentPiece()
 
 	case y > viewBoardCoordinates.boardBottomY:
-		if time.Since(view.lastMoveDownButtonEventTime) <= 200*time.Millisecond {
+		if eventTime.Sub(view.lastMoveDownButtonEventTime) <= 200*time.Millisecond {
 			// double click
 			view.model.DropCurrentPiece()
 		} else {
