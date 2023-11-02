@@ -255,23 +255,29 @@ func (tm *tetrisModel) addCurrentPieceToStack() {
 }
 
 func (tm *tetrisModel) handleFilledStackRows() {
-	row := coordinate.BoardModelRows - 1
-
-	for row >= 0 {
-		rowIsFull := true
+	rowIsFull := func(row int) bool {
 		for _, cell := range tm.stackCells[row] {
 			if !cell.occupied {
-				rowIsFull = false
-				break
+				return false
 			}
 		}
-		if rowIsFull {
+		return true
+	}
+
+	modifiedStackCells := false
+	for row := coordinate.BoardModelRows - 1; row >= 0; {
+		if rowIsFull(row) {
 			tm.stackCells = slices.Delete(tm.stackCells, row, row+1)
 			tm.stackCells = slices.Insert(tm.stackCells, 0, make([]tetrisModelCell, coordinate.BoardModelColumns))
+			modifiedStackCells = true
 			tm.lines += 1
 		} else {
 			row -= 1
 		}
+	}
+
+	if modifiedStackCells {
+		tm.stackCells = slices.Clip(tm.stackCells)
 	}
 }
 
