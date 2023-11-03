@@ -57,21 +57,21 @@ func NewTetrisModel() TetrisModel {
 }
 
 func newTetrisModel() *tetrisModel {
-	tetrisModel := &tetrisModel{}
-
-	tetrisModel.initializeStackCells()
+	tetrisModel := &tetrisModel{
+		stackCells: createStackCells(),
+	}
 
 	return tetrisModel
 }
 
-func (tm *tetrisModel) initializeStackCells() {
-	stackCells := make([][]tetrisModelCell, coordinate.BoardModelRows)
+func createStackCells() (stackCells [][]tetrisModelCell) {
+	stackCells = make([][]tetrisModelCell, coordinate.BoardModelRows)
 
 	for row := 0; row < coordinate.BoardModelRows; row += 1 {
 		stackCells[row] = make([]tetrisModelCell, coordinate.BoardModelColumns)
 	}
 
-	tm.stackCells = stackCells
+	return
 }
 
 func (tm *tetrisModel) DrawableCells() [][]TetrisModelCell {
@@ -79,12 +79,12 @@ func (tm *tetrisModel) DrawableCells() [][]TetrisModelCell {
 		return tm.drawableCellsCache
 	}
 
-	drawableCellsCache := make([][]TetrisModelCell, coordinate.BoardModelRows)
+	tm.drawableCellsCache = make([][]TetrisModelCell, coordinate.BoardModelRows)
 
 	for row := 0; row < coordinate.BoardModelRows; row += 1 {
-		drawableCellsCache[row] = make([]TetrisModelCell, coordinate.BoardModelColumns)
+		tm.drawableCellsCache[row] = make([]TetrisModelCell, coordinate.BoardModelColumns)
 		for column := 0; column < coordinate.BoardModelColumns; column += 1 {
-			drawableCellsCache[row][column] = tm.stackCells[row][column]
+			tm.drawableCellsCache[row][column] = tm.stackCells[row][column]
 		}
 	}
 
@@ -94,11 +94,9 @@ func (tm *tetrisModel) DrawableCells() [][]TetrisModelCell {
 				occupied: true,
 				color:    tm.currentPiece.Color(),
 			}
-			drawableCellsCache[coordinates.Row()][coordinates.Column()] = drawableCell
+			tm.drawableCellsCache[coordinates.Row()][coordinates.Column()] = drawableCell
 		}
 	}
-
-	tm.drawableCellsCache = drawableCellsCache
 
 	return tm.drawableCellsCache
 }
