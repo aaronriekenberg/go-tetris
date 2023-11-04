@@ -90,11 +90,11 @@ func (tm *tetrisModel) DrawableCells() [][]TetrisModelCell {
 
 	if tm.currentPiece != nil {
 		for _, coordinates := range tm.currentPiece.Coordinates() {
-			drawableCell := tetrisModelCell{
-				occupied: true,
-				color:    tm.currentPiece.Color(),
-			}
-			tm.drawableCellsCache[coordinates.Row()][coordinates.Column()] = drawableCell
+			tm.drawableCellsCache[coordinates.Row()][coordinates.Column()] =
+				tetrisModelCell{
+					occupied: true,
+					color:    tm.currentPiece.Color(),
+				}
 		}
 	}
 
