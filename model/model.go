@@ -152,21 +152,23 @@ func (tm *tetrisModel) MoveCurrentPieceDown() {
 	}
 
 	currentPiece := tm.currentPiece
-	if currentPiece != nil {
-		centerCoordinate := currentPiece.CenterCoordinate()
-
-		newCenterCoordinate := centerCoordinate.AddRows(1)
-
-		updatedPiece := currentPiece.CloneWithNewCenterCoordinate(newCenterCoordinate)
-
-		if !tm.isPieceLocationValid(updatedPiece) {
-			tm.addCurrentPieceToStack()
-		} else {
-			tm.currentPiece = updatedPiece
-		}
-
-		tm.invalidateDrawableCellsCache()
+	if currentPiece == nil {
+		return
 	}
+
+	centerCoordinate := currentPiece.CenterCoordinate()
+
+	newCenterCoordinate := centerCoordinate.AddRows(1)
+
+	updatedPiece := currentPiece.CloneWithNewCenterCoordinate(newCenterCoordinate)
+
+	if !tm.isPieceLocationValid(updatedPiece) {
+		tm.addCurrentPieceToStack()
+	} else {
+		tm.currentPiece = updatedPiece
+	}
+
+	tm.invalidateDrawableCellsCache()
 }
 
 func (tm *tetrisModel) MoveCurrentPieceLeft() {
@@ -175,18 +177,20 @@ func (tm *tetrisModel) MoveCurrentPieceLeft() {
 	}
 
 	currentPiece := tm.currentPiece
-	if currentPiece != nil {
-		centerCoordinate := currentPiece.CenterCoordinate()
+	if currentPiece == nil {
+		return
+	}
 
-		newCenterCoordinate := centerCoordinate.AddColumns(-1)
+	centerCoordinate := currentPiece.CenterCoordinate()
 
-		updatedPiece := currentPiece.CloneWithNewCenterCoordinate(newCenterCoordinate)
+	newCenterCoordinate := centerCoordinate.AddColumns(-1)
 
-		if tm.isPieceLocationValid(updatedPiece) {
-			tm.currentPiece = updatedPiece
+	updatedPiece := currentPiece.CloneWithNewCenterCoordinate(newCenterCoordinate)
 
-			tm.invalidateDrawableCellsCache()
-		}
+	if tm.isPieceLocationValid(updatedPiece) {
+		tm.currentPiece = updatedPiece
+
+		tm.invalidateDrawableCellsCache()
 	}
 }
 
@@ -196,18 +200,20 @@ func (tm *tetrisModel) MoveCurrentPieceRight() {
 	}
 
 	currentPiece := tm.currentPiece
-	if currentPiece != nil {
-		centerCoordinate := currentPiece.CenterCoordinate()
+	if currentPiece == nil {
+		return
+	}
 
-		newCenterCoordinate := centerCoordinate.AddColumns(1)
+	centerCoordinate := currentPiece.CenterCoordinate()
 
-		updatedPiece := currentPiece.CloneWithNewCenterCoordinate(newCenterCoordinate)
+	newCenterCoordinate := centerCoordinate.AddColumns(1)
 
-		if tm.isPieceLocationValid(updatedPiece) {
-			tm.currentPiece = updatedPiece
+	updatedPiece := currentPiece.CloneWithNewCenterCoordinate(newCenterCoordinate)
 
-			tm.invalidateDrawableCellsCache()
-		}
+	if tm.isPieceLocationValid(updatedPiece) {
+		tm.currentPiece = updatedPiece
+
+		tm.invalidateDrawableCellsCache()
 	}
 }
 
@@ -217,14 +223,16 @@ func (tm *tetrisModel) RotateCurrentPiece() {
 	}
 
 	currentPiece := tm.currentPiece
-	if currentPiece != nil {
-		updatedPiece := currentPiece.CloneWithNextOrientation()
+	if currentPiece == nil {
+		return
+	}
 
-		if tm.isPieceLocationValid(updatedPiece) {
-			tm.currentPiece = updatedPiece
+	updatedPiece := currentPiece.CloneWithNextOrientation()
 
-			tm.invalidateDrawableCellsCache()
-		}
+	if tm.isPieceLocationValid(updatedPiece) {
+		tm.currentPiece = updatedPiece
+
+		tm.invalidateDrawableCellsCache()
 	}
 }
 
@@ -240,13 +248,16 @@ func (tm *tetrisModel) DropCurrentPiece() {
 
 func (tm *tetrisModel) addCurrentPieceToStack() {
 	currentPiece := tm.currentPiece
-	if currentPiece != nil {
-		for _, coordinate := range currentPiece.Coordinates() {
-			stackCell := &tm.stackCells[coordinate.Row()][coordinate.Column()]
-			stackCell.occupied = true
-			stackCell.color = currentPiece.Color()
-		}
+	if currentPiece == nil {
+		return
 	}
+
+	for _, coordinate := range currentPiece.Coordinates() {
+		stackCell := &tm.stackCells[coordinate.Row()][coordinate.Column()]
+		stackCell.occupied = true
+		stackCell.color = currentPiece.Color()
+	}
+
 	tm.currentPiece = nil
 
 	tm.handleFilledStackRows()
