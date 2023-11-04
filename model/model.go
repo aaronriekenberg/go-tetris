@@ -28,7 +28,7 @@ func (tmc tetrisModelCell) Color() tcell.Color {
 }
 
 type DrawableInfoModel interface {
-	DrawableCells() [][]TetrisModelCell
+	DrawableCells() map[coordinate.TetrisModelCoordinate]TetrisModelCell
 	Lines() int
 	GameOver() bool
 }
@@ -45,7 +45,7 @@ type TetrisModel interface {
 }
 
 type tetrisModel struct {
-	drawableCellsCache [][]TetrisModelCell
+	drawableCellsCache *map[coordinate.TetrisModelCoordinate]TetrisModelCell
 	currentPiece       pieces.TetrisPiece
 	stackCells         [][]tetrisModelCell
 	lines              int
@@ -74,23 +74,22 @@ func createStackCells() (stackCells [][]tetrisModelCell) {
 	return
 }
 
-func (tm *tetrisModel) DrawableCells() [][]TetrisModelCell {
+func (tm *tetrisModel) DrawableCells() map[coordinate.TetrisModelCoordinate]TetrisModelCell {
 	if tm.drawableCellsCache != nil {
-		return tm.drawableCellsCache
+		return *tm.drawableCellsCache
 	}
 
-	tm.drawableCellsCache = make([][]TetrisModelCell, coordinate.BoardModelRows)
+	drawableCellsCache := make(map[coordinate.TetrisModelCoordinate]TetrisModelCell)
 
 	for row := 0; row < coordinate.BoardModelRows; row += 1 {
-		tm.drawableCellsCache[row] = make([]TetrisModelCell, coordinate.BoardModelColumns)
 		for column := 0; column < coordinate.BoardModelColumns; column += 1 {
-			tm.drawableCellsCache[row][column] = tm.stackCells[row][column]
+			drawableCellsCache[coordinate.NewTetrisModelCoordinate(row, column)] = tm.stackCells[row][column]
 		}
 	}
 
 	if tm.currentPiece != nil {
-		for _, coordinates := range tm.currentPiece.Coordinates() {
-			tm.drawableCellsCache[coordinates.Row()][coordinates.Column()] =
+		for _, coord := range tm.currentPiece.Coordinates() {
+			drawableCellsCache[coord] =
 				tetrisModelCell{
 					occupied: true,
 					color:    tm.currentPiece.Color(),
@@ -98,7 +97,9 @@ func (tm *tetrisModel) DrawableCells() [][]TetrisModelCell {
 		}
 	}
 
-	return tm.drawableCellsCache
+	tm.drawableCellsCache = &drawableCellsCache
+
+	return *tm.drawableCellsCache
 }
 
 func (tm *tetrisModel) invalidateDrawableCellsCache() {

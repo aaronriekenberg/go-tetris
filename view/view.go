@@ -94,10 +94,11 @@ func (view *view) drawBoard(
 	for viewColumn := 0; viewColumn < boardWidthViewCells; viewColumn += 2 {
 		for viewRow := 0; viewRow < boardHeightViewCells; viewRow += 1 {
 			var comb []rune
-			modelRow := viewRow
-			modelColumn := (viewColumn / 2)
+			modelCoordinate := coordinate.NewTetrisModelCoordinate(
+				viewRow, (viewColumn / 2),
+			)
 
-			modelCell := drawableCells[modelRow][modelColumn]
+			modelCell := drawableCells[modelCoordinate]
 
 			style := bgStyle
 			if modelCell.Occupied() {
