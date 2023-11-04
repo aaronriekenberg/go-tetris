@@ -211,7 +211,7 @@ func (view *view) HandleButton1PressEvent(
 		}
 		view.lastMoveDownButtonEventTime = eventTime
 
-	case utils.Abs(x-viewBoardCoordinates.boardLeftX) < utils.Abs(x-viewBoardCoordinates.boardRightX):
+	case utils.IntegerAbs(x-viewBoardCoordinates.boardLeftX) < utils.IntegerAbs(x-viewBoardCoordinates.boardRightX):
 		view.model.MoveCurrentPieceLeft()
 
 	default:

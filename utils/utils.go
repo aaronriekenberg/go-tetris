@@ -10,7 +10,7 @@ func RunningInWASM() bool {
 	return runtime.GOARCH == "wasm"
 }
 
-func Abs[T constraints.Integer | constraints.Float](x T) T {
+func IntegerAbs[T constraints.Integer](x T) T {
 	if x < 0 {
 		return -x
 	}
