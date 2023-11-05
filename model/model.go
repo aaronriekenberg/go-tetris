@@ -34,11 +34,12 @@ type TetrisModel interface {
 }
 
 type tetrisModel struct {
-	drawableCellsCache DrawableCellsMap
-	currentPiece       pieces.TetrisPiece
-	stackCells         [][]tetrisModelCell
-	lines              int
-	gameOver           bool
+	drawableCellsCache      DrawableCellsMap
+	drawableCellsCacheValid bool
+	currentPiece            pieces.TetrisPiece
+	stackCells              [][]tetrisModelCell
+	lines                   int
+	gameOver                bool
 }
 
 func NewTetrisModel() TetrisModel {
@@ -47,7 +48,8 @@ func NewTetrisModel() TetrisModel {
 
 func newTetrisModel() *tetrisModel {
 	tetrisModel := &tetrisModel{
-		stackCells: createStackCells(),
+		drawableCellsCache: make(DrawableCellsMap, coordinate.BoardModelNumCells),
+		stackCells:         createStackCells(),
 	}
 
 	return tetrisModel
@@ -64,11 +66,9 @@ func createStackCells() (stackCells [][]tetrisModelCell) {
 }
 
 func (tm *tetrisModel) DrawableCells() DrawableCellsMap {
-	if tm.drawableCellsCache != nil {
+	if tm.drawableCellsCacheValid {
 		return tm.drawableCellsCache
 	}
-
-	tm.drawableCellsCache = make(DrawableCellsMap, coordinate.BoardModelNumCells)
 
 	for row := 0; row < coordinate.BoardModelRows; row += 1 {
 		for column := 0; column < coordinate.BoardModelColumns; column += 1 {
@@ -86,11 +86,14 @@ func (tm *tetrisModel) DrawableCells() DrawableCellsMap {
 		}
 	}
 
+	tm.drawableCellsCacheValid = true
+
 	return tm.drawableCellsCache
 }
 
 func (tm *tetrisModel) invalidateDrawableCellsCache() {
-	tm.drawableCellsCache = nil
+	clear(tm.drawableCellsCache)
+	tm.drawableCellsCacheValid = false
 }
 
 func (tm *tetrisModel) Lines() int {
