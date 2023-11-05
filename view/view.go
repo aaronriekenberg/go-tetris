@@ -102,7 +102,7 @@ func (view *view) drawBoard(
 
 			style := unoccupiedCellStyle
 			if cellColor.Valid() {
-				style = tcell.StyleDefault.Foreground(cellColor).Background(cellColor)
+				style = style.Foreground(cellColor).Background(cellColor)
 			}
 
 			x, y := viewBoardCoordinates.boardLeftX+viewColumn, viewBoardCoordinates.boardTopY+viewRow
