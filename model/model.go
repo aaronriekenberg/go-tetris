@@ -70,6 +70,8 @@ func (tm *tetrisModel) DrawableCells() DrawableCellsMap {
 		return tm.drawableCellsCache
 	}
 
+	clear(tm.drawableCellsCache)
+
 	for row := 0; row < coordinate.BoardModelRows; row += 1 {
 		for column := 0; column < coordinate.BoardModelColumns; column += 1 {
 			stackCell := &tm.stackCells[row][column]
@@ -92,7 +94,6 @@ func (tm *tetrisModel) DrawableCells() DrawableCellsMap {
 }
 
 func (tm *tetrisModel) invalidateDrawableCellsCache() {
-	clear(tm.drawableCellsCache)
 	tm.drawableCellsCacheValid = false
 }
 
