@@ -89,7 +89,7 @@ func (view *view) drawBoard(
 ) {
 	drawableCells := view.model.DrawableCells()
 
-	bgStyle := tcell.StyleDefault.Foreground(tcell.ColorBlack).Background(tcell.ColorBlack)
+	unoccupiedCellStyle := tcell.StyleDefault.Foreground(tcell.ColorBlack).Background(tcell.ColorBlack)
 
 	for viewColumn := 0; viewColumn < boardWidthViewCells; viewColumn += 2 {
 		for viewRow := 0; viewRow < boardHeightViewCells; viewRow += 1 {
@@ -98,11 +98,11 @@ func (view *view) drawBoard(
 				viewRow, (viewColumn / 2),
 			)
 
-			modelCell := drawableCells[modelCoordinate]
+			cellColor := drawableCells[modelCoordinate]
 
-			style := bgStyle
-			if modelCell.Occupied() {
-				style = tcell.StyleDefault.Foreground(modelCell.Color()).Background(modelCell.Color())
+			style := unoccupiedCellStyle
+			if cellColor != tcell.ColorDefault {
+				style = tcell.StyleDefault.Foreground(cellColor).Background(cellColor)
 			}
 
 			x, y := viewBoardCoordinates.boardLeftX+viewColumn, viewBoardCoordinates.boardTopY+viewRow

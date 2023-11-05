@@ -1,8 +1,9 @@
 package coordinate
 
 const (
-	BoardModelRows    = 16
-	BoardModelColumns = 12
+	BoardModelRows     = 16
+	BoardModelColumns  = 12
+	BoardModelNumCells = BoardModelRows * BoardModelColumns
 )
 
 // (0, 0) is topmost and leftmost cell

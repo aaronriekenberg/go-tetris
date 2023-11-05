@@ -9,26 +9,15 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-type TetrisModelCell interface {
-	Occupied() bool
-	Color() tcell.Color
-}
-
 type tetrisModelCell struct {
 	occupied bool
 	color    tcell.Color
 }
 
-func (tmc tetrisModelCell) Occupied() bool {
-	return tmc.occupied
-}
-
-func (tmc tetrisModelCell) Color() tcell.Color {
-	return tmc.color
-}
+type DrawableCellsMap = map[coordinate.TetrisModelCoordinate]tcell.Color
 
 type DrawableInfoModel interface {
-	DrawableCells() map[coordinate.TetrisModelCoordinate]TetrisModelCell
+	DrawableCells() DrawableCellsMap
 	Lines() int
 	GameOver() bool
 }
@@ -45,7 +34,7 @@ type TetrisModel interface {
 }
 
 type tetrisModel struct {
-	drawableCellsCache *map[coordinate.TetrisModelCoordinate]TetrisModelCell
+	drawableCellsCache DrawableCellsMap
 	currentPiece       pieces.TetrisPiece
 	stackCells         [][]tetrisModelCell
 	lines              int
@@ -74,32 +63,30 @@ func createStackCells() (stackCells [][]tetrisModelCell) {
 	return
 }
 
-func (tm *tetrisModel) DrawableCells() map[coordinate.TetrisModelCoordinate]TetrisModelCell {
+func (tm *tetrisModel) DrawableCells() DrawableCellsMap {
 	if tm.drawableCellsCache != nil {
-		return *tm.drawableCellsCache
+		return tm.drawableCellsCache
 	}
 
-	drawableCellsCache := make(map[coordinate.TetrisModelCoordinate]TetrisModelCell)
+	tm.drawableCellsCache = make(DrawableCellsMap, coordinate.BoardModelNumCells)
 
 	for row := 0; row < coordinate.BoardModelRows; row += 1 {
 		for column := 0; column < coordinate.BoardModelColumns; column += 1 {
-			drawableCellsCache[coordinate.NewTetrisModelCoordinate(row, column)] = tm.stackCells[row][column]
+			stackCell := &tm.stackCells[row][column]
+			if stackCell.occupied {
+				coord := coordinate.NewTetrisModelCoordinate(row, column)
+				tm.drawableCellsCache[coord] = stackCell.color
+			}
 		}
 	}
 
 	if tm.currentPiece != nil {
 		for _, coord := range tm.currentPiece.Coordinates() {
-			drawableCellsCache[coord] =
-				tetrisModelCell{
-					occupied: true,
-					color:    tm.currentPiece.Color(),
-				}
+			tm.drawableCellsCache[coord] = tm.currentPiece.Color()
 		}
 	}
 
-	tm.drawableCellsCache = &drawableCellsCache
-
-	return *tm.drawableCellsCache
+	return tm.drawableCellsCache
 }
 
 func (tm *tetrisModel) invalidateDrawableCellsCache() {
