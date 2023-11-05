@@ -101,7 +101,7 @@ func (view *view) drawBoard(
 			cellColor := drawableCells[modelCoordinate]
 
 			style := unoccupiedCellStyle
-			if cellColor != tcell.ColorDefault {
+			if cellColor.Valid() {
 				style = tcell.StyleDefault.Foreground(cellColor).Background(cellColor)
 			}
 
