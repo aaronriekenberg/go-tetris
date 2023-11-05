@@ -98,10 +98,10 @@ func (view *view) drawBoard(
 				viewRow, (viewColumn / 2),
 			)
 
-			cellColor := drawableCells[modelCoordinate]
+			cellColor, cellIsDrawable := drawableCells[modelCoordinate]
 
 			style := unoccupiedCellStyle
-			if cellColor.Valid() {
+			if cellIsDrawable {
 				style = style.Foreground(cellColor).Background(cellColor)
 			}
 
