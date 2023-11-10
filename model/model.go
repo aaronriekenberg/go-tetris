@@ -34,12 +34,11 @@ type TetrisModel interface {
 }
 
 type tetrisModel struct {
-	drawableCellsCache      DrawableCellsMap
-	drawableCellsCacheValid bool
-	currentPiece            pieces.TetrisPiece
-	stackCells              [][]tetrisModelCell
-	lines                   int
-	gameOver                bool
+	drawableCellsCache drawableCellsCache
+	currentPiece       pieces.TetrisPiece
+	stackCells         [][]tetrisModelCell
+	lines              int
+	gameOver           bool
 }
 
 func NewTetrisModel() TetrisModel {
@@ -48,8 +47,7 @@ func NewTetrisModel() TetrisModel {
 
 func newTetrisModel() *tetrisModel {
 	tetrisModel := &tetrisModel{
-		drawableCellsCache: make(DrawableCellsMap, coordinate.BoardModelNumCells),
-		stackCells:         createStackCells(),
+		stackCells: createStackCells(),
 	}
 
 	return tetrisModel
@@ -66,35 +64,11 @@ func createStackCells() (stackCells [][]tetrisModelCell) {
 }
 
 func (tm *tetrisModel) DrawableCells() DrawableCellsMap {
-	if tm.drawableCellsCacheValid {
-		return tm.drawableCellsCache
-	}
-
-	clear(tm.drawableCellsCache)
-
-	for row := 0; row < coordinate.BoardModelRows; row += 1 {
-		for column := 0; column < coordinate.BoardModelColumns; column += 1 {
-			stackCell := &tm.stackCells[row][column]
-			if stackCell.occupied {
-				coord := coordinate.NewTetrisModelCoordinate(row, column)
-				tm.drawableCellsCache[coord] = stackCell.color
-			}
-		}
-	}
-
-	if tm.currentPiece != nil {
-		for _, coord := range tm.currentPiece.Coordinates() {
-			tm.drawableCellsCache[coord] = tm.currentPiece.Color()
-		}
-	}
-
-	tm.drawableCellsCacheValid = true
-
-	return tm.drawableCellsCache
+	return tm.drawableCellsCache.drawableCells(tm)
 }
 
 func (tm *tetrisModel) invalidateDrawableCellsCache() {
-	tm.drawableCellsCacheValid = false
+	tm.drawableCellsCache.invalidate()
 }
 
 func (tm *tetrisModel) Lines() int {
@@ -294,4 +268,45 @@ func (tm *tetrisModel) PeriodicUpdate() {
 	}
 
 	tm.invalidateDrawableCellsCache()
+}
+
+type drawableCellsCache struct {
+	drawableCellsMap DrawableCellsMap
+	valid            bool
+}
+
+func (cache *drawableCellsCache) invalidate() {
+	cache.valid = false
+}
+
+func (cache *drawableCellsCache) drawableCells(tm *tetrisModel) DrawableCellsMap {
+	if cache.valid {
+		return cache.drawableCellsMap
+	}
+
+	if cache.drawableCellsMap == nil {
+		cache.drawableCellsMap = make(DrawableCellsMap, coordinate.BoardModelNumCells)
+	}
+
+	clear(cache.drawableCellsMap)
+
+	for row := 0; row < coordinate.BoardModelRows; row += 1 {
+		for column := 0; column < coordinate.BoardModelColumns; column += 1 {
+			stackCell := &tm.stackCells[row][column]
+			if stackCell.occupied {
+				coord := coordinate.NewTetrisModelCoordinate(row, column)
+				cache.drawableCellsMap[coord] = stackCell.color
+			}
+		}
+	}
+
+	if tm.currentPiece != nil {
+		for _, coord := range tm.currentPiece.Coordinates() {
+			cache.drawableCellsMap[coord] = tm.currentPiece.Color()
+		}
+	}
+
+	cache.valid = true
+
+	return cache.drawableCellsMap
 }
