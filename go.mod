@@ -5,7 +5,7 @@ go 1.21.4
 require (
 	github.com/gdamore/tcell/v2 v2.6.0
 	github.com/mattn/go-runewidth v0.0.15
-	golang.org/x/exp v0.0.0-20231108232855-2478ac86f678
+	golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa
 )
 
 require (
