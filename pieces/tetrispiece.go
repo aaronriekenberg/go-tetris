@@ -22,6 +22,7 @@ type TetrisPiece interface {
 
 type createOrientationFunc = func(centerCoordinate coordinate.TetrisModelCoordinate) []coordinate.TetrisModelCoordinate
 
+// Immutable after creation.
 type tetrisPiece struct {
 	color                  tcell.Color
 	centerCoordinate       coordinate.TetrisModelCoordinate

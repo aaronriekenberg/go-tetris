@@ -6,7 +6,8 @@ const (
 	BoardModelNumCells = BoardModelRows * BoardModelColumns
 )
 
-// (0, 0) is topmost and leftmost cell
+// (0, 0) is the topmost and leftmost cell.
+// Immutable after creation.
 type TetrisModelCoordinate struct {
 	row    int
 	column int
