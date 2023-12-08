@@ -56,7 +56,7 @@ func newTetrisModel() *tetrisModel {
 func createStackCells() (stackCells [][]tetrisModelCell) {
 	stackCells = make([][]tetrisModelCell, coordinate.BoardModelRows)
 
-	for row := 0; row < coordinate.BoardModelRows; row += 1 {
+	for row := range stackCells {
 		stackCells[row] = make([]tetrisModelCell, coordinate.BoardModelColumns)
 	}
 
@@ -290,8 +290,8 @@ func (cache *drawableCellsCache) drawableCells(tm *tetrisModel) DrawableCellsMap
 
 	clear(cache.drawableCellsMap)
 
-	for row := 0; row < coordinate.BoardModelRows; row += 1 {
-		for column := 0; column < coordinate.BoardModelColumns; column += 1 {
+	for row := range tm.stackCells {
+		for column := range tm.stackCells[row] {
 			stackCell := &tm.stackCells[row][column]
 			if stackCell.occupied {
 				coord := coordinate.NewTetrisModelCoordinate(row, column)
