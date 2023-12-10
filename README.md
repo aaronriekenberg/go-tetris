@@ -2,12 +2,23 @@
 
 TUI and WASM tetris in go using [tcell](https://github.com/gdamore/tcell).
 
-This program can be used either in a terminal as a native app, or as a [WASM app](https://github.com/gdamore/tcell/blob/main/README-wasm.md).
+This program can be used either in a terminal as a native app, or as a [WASM app](https://github.com/gdamore/tcell/blob/main/README-wasm.md) in a web browser.
 
-## Play as a WASM app:
+## Run as a WASM app in a browser:
 
 - https://aaronriekenberg.github.io/go-tetris/
 - Deployed to github pages on every commit by github actions.
+
+## Run as a native terminal app:
+
+- Clone this git repo, build with `go build`, run `go-tetris`
+- All usual `go` commands work:
+
+```
+go run github.com/aaronriekenberg/go-tetris@latest
+
+go install go run github.com/aaronriekenberg/go-tetris@latest
+```
 
 ## Keys:
 
