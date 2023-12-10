@@ -17,7 +17,7 @@ This program can be used either in a terminal as a native app, or as a [WASM app
 ```
 go run github.com/aaronriekenberg/go-tetris@latest
 
-go install go run github.com/aaronriekenberg/go-tetris@latest
+go install github.com/aaronriekenberg/go-tetris@latest
 ```
 
 ## Keys:
