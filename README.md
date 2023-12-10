@@ -7,7 +7,7 @@ This program can be used either in a terminal as a native app, or as a [WASM app
 ## Run as a WASM app in a browser:
 
 - https://aaronriekenberg.github.io/go-tetris/
-- Deployed to github pages on every commit by github actions.
+- Automatic deploy to github pages on every commit by github actions.
 
 ## Run as a native terminal app:
 
