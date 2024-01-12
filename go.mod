@@ -1,11 +1,11 @@
 module github.com/aaronriekenberg/go-tetris
 
-go 1.21.5
+go 1.21.6
 
 require (
 	github.com/gdamore/tcell/v2 v2.7.0
 	github.com/mattn/go-runewidth v0.0.15
-	golang.org/x/exp v0.0.0-20240103183307-be819d1f06fc
+	golang.org/x/exp v0.0.0-20240110193028-0dcbfd608b1e
 )
 
 require (
