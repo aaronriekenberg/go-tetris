@@ -6,9 +6,7 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
-func RunningInWASM() bool {
-	return runtime.GOARCH == "wasm"
-}
+const RunningInWASM = runtime.GOARCH == "wasm"
 
 func IntegerAbs[T constraints.Integer](x T) T {
 	if x < 0 {

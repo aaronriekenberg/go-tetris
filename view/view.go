@@ -48,7 +48,7 @@ func NewView(
 	model model.TetrisModel,
 ) View {
 
-	if utils.RunningInWASM() {
+	if utils.RunningInWASM {
 		screen.SetSize(40, 34)
 	}
 

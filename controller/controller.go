@@ -32,7 +32,6 @@ func runEventLoop(
 	view view.View,
 	tetrisModel model.TetrisModel,
 ) {
-	runningInWASM := utils.RunningInWASM()
 
 	periodicUpdateTicker := time.NewTicker(500 * time.Millisecond)
 	go func() {
@@ -72,7 +71,7 @@ func runEventLoop(
 		case *tcell.EventKey:
 			switch ev.Key() {
 			case tcell.KeyEscape:
-				if !runningInWASM {
+				if !utils.RunningInWASM {
 					quit()
 				}
 			case tcell.KeyLeft:
@@ -90,7 +89,7 @@ func runEventLoop(
 			case tcell.KeyRune:
 				switch ev.Rune() {
 				case 'q':
-					if !runningInWASM {
+					if !utils.RunningInWASM {
 						quit()
 					}
 				case 'r':
