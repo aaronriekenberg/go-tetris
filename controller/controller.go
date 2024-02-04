@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"sync/atomic"
 	"time"
 
 	"github.com/aaronriekenberg/go-tetris/model"
@@ -28,20 +27,15 @@ func Run() {
 	)
 }
 
-type updateDuration struct {
-	currentDuration time.Duration
-}
+func setPeriodicUpdateTimer(
+	duration time.Duration,
+	eventSource view.ScreenEventSource,
+) {
+	go func() {
+		time.Sleep(duration)
 
-var atomicUpdateDuration atomic.Pointer[updateDuration]
-
-func setAtomicUpdateDuration(currentDuration time.Duration) {
-	atomicUpdateDuration.Store(&updateDuration{
-		currentDuration: currentDuration,
-	})
-}
-
-func loadAtomicUpdateDuration() time.Duration {
-	return atomicUpdateDuration.Load().currentDuration
+		eventSource.PostEvent(tcell.NewEventInterrupt(periodicUpdateInterruptCustomEvent{}))
+	}()
 }
 
 func runEventLoop(
@@ -49,16 +43,7 @@ func runEventLoop(
 	view view.View,
 	tetrisModel model.TetrisModel,
 ) {
-	setAtomicUpdateDuration(tetrisModel.UpdateDuration())
-
-	go func() {
-		for {
-			sleepDuration := loadAtomicUpdateDuration()
-			time.Sleep(sleepDuration)
-
-			eventSource.PostEvent(tcell.NewEventInterrupt(periodicUpdateInterruptCustomEvent{}))
-		}
-	}()
+	setPeriodicUpdateTimer(tetrisModel.UpdateDuration(), eventSource)
 
 	done := false
 
@@ -84,7 +69,7 @@ func runEventLoop(
 			switch ev.Data().(type) {
 			case periodicUpdateInterruptCustomEvent:
 				tetrisModel.PeriodicUpdate()
-				setAtomicUpdateDuration(tetrisModel.UpdateDuration())
+				setPeriodicUpdateTimer(tetrisModel.UpdateDuration(), eventSource)
 
 				view.Draw()
 			}
