@@ -2,6 +2,7 @@ package model
 
 import (
 	"slices"
+	"time"
 
 	"github.com/aaronriekenberg/go-tetris/coordinate"
 	"github.com/aaronriekenberg/go-tetris/pieces"
@@ -31,6 +32,7 @@ type TetrisModel interface {
 	RotateCurrentPiece()
 	DropCurrentPiece()
 	PeriodicUpdate()
+	UpdateDuration() time.Duration
 }
 
 type tetrisModel struct {
@@ -39,6 +41,7 @@ type tetrisModel struct {
 	stackCells         [][]tetrisModelCell
 	lines              int
 	gameOver           bool
+	updateDuration     time.Duration
 }
 
 func NewTetrisModel() TetrisModel {
@@ -47,7 +50,8 @@ func NewTetrisModel() TetrisModel {
 
 func newTetrisModel() *tetrisModel {
 	tetrisModel := &tetrisModel{
-		stackCells: createStackCells(),
+		stackCells:     createStackCells(),
+		updateDuration: computeUpdateDuration(0),
 	}
 
 	return tetrisModel
@@ -61,6 +65,27 @@ func createStackCells() (stackCells [][]tetrisModelCell) {
 	}
 
 	return
+}
+
+func computeUpdateDuration(lines int) time.Duration {
+	switch {
+	case lines < 10:
+		return 500 * time.Millisecond
+	case lines < 20:
+		return 450 * time.Millisecond
+	case lines < 30:
+		return 400 * time.Millisecond
+	case lines < 40:
+		return 350 * time.Millisecond
+	case lines < 50:
+		return 300 * time.Millisecond
+	case lines < 60:
+		return 250 * time.Millisecond
+	case lines < 70:
+		return 200 * time.Millisecond
+	default:
+		return 150 * time.Millisecond
+	}
 }
 
 func (tm *tetrisModel) DrawableCells() DrawableCellsMap {
@@ -253,6 +278,7 @@ func (tm *tetrisModel) handleFilledStackRows() {
 
 	if modifiedStackCells {
 		tm.stackCells = slices.Clip(tm.stackCells)
+		tm.updateDuration = computeUpdateDuration(tm.lines)
 	}
 }
 
@@ -268,6 +294,10 @@ func (tm *tetrisModel) PeriodicUpdate() {
 	}
 
 	tm.invalidateDrawableCellsCache()
+}
+
+func (tm *tetrisModel) UpdateDuration() time.Duration {
+	return tm.updateDuration
 }
 
 type drawableCellsCache struct {
