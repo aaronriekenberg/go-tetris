@@ -1,7 +1,7 @@
 package pieces
 
 import (
-	"math/rand"
+	"math/rand/v2"
 
 	"github.com/aaronriekenberg/go-tetris/coordinate"
 )
@@ -21,5 +21,5 @@ var pieceConstructors = []pieceConstructor{
 func CreateRandomPiece(
 	centerCoordinate coordinate.TetrisModelCoordinate,
 ) TetrisPiece {
-	return pieceConstructors[rand.Intn(len(pieceConstructors))](centerCoordinate)
+	return pieceConstructors[rand.N(len(pieceConstructors))](centerCoordinate)
 }
