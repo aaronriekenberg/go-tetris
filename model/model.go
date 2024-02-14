@@ -21,6 +21,7 @@ type DrawableInfoModel interface {
 	DrawableCells() DrawableCellsMap
 	Lines() int
 	GameOver() bool
+	UpdateDuration() time.Duration
 }
 
 type TetrisModel interface {
@@ -32,7 +33,6 @@ type TetrisModel interface {
 	RotateCurrentPiece()
 	DropCurrentPiece()
 	PeriodicUpdate()
-	UpdateDuration() time.Duration
 }
 
 type tetrisModel struct {
