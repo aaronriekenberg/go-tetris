@@ -41,7 +41,6 @@ type tetrisModel struct {
 	stackCells         [][]tetrisModelCell
 	lines              int
 	gameOver           bool
-	updateDuration     time.Duration
 }
 
 func NewTetrisModel() TetrisModel {
@@ -50,8 +49,7 @@ func NewTetrisModel() TetrisModel {
 
 func newTetrisModel() *tetrisModel {
 	tetrisModel := &tetrisModel{
-		stackCells:     createStackCells(),
-		updateDuration: computeUpdateDuration(0),
+		stackCells: createStackCells(),
 	}
 
 	return tetrisModel
@@ -65,27 +63,6 @@ func createStackCells() (stackCells [][]tetrisModelCell) {
 	}
 
 	return
-}
-
-func computeUpdateDuration(lines int) time.Duration {
-	switch {
-	case lines < 10:
-		return 500 * time.Millisecond
-	case lines < 20:
-		return 450 * time.Millisecond
-	case lines < 30:
-		return 400 * time.Millisecond
-	case lines < 40:
-		return 350 * time.Millisecond
-	case lines < 50:
-		return 300 * time.Millisecond
-	case lines < 60:
-		return 250 * time.Millisecond
-	case lines < 70:
-		return 200 * time.Millisecond
-	default:
-		return 150 * time.Millisecond
-	}
 }
 
 func (tm *tetrisModel) DrawableCells() DrawableCellsMap {
@@ -278,7 +255,6 @@ func (tm *tetrisModel) handleFilledStackRows() {
 
 	if modifiedStackCells {
 		tm.stackCells = slices.Clip(tm.stackCells)
-		tm.updateDuration = computeUpdateDuration(tm.lines)
 	}
 }
 
@@ -297,7 +273,24 @@ func (tm *tetrisModel) PeriodicUpdate() {
 }
 
 func (tm *tetrisModel) UpdateDuration() time.Duration {
-	return tm.updateDuration
+	switch {
+	case tm.lines < 10 || tm.gameOver:
+		return 500 * time.Millisecond
+	case tm.lines < 20:
+		return 450 * time.Millisecond
+	case tm.lines < 30:
+		return 400 * time.Millisecond
+	case tm.lines < 40:
+		return 350 * time.Millisecond
+	case tm.lines < 50:
+		return 300 * time.Millisecond
+	case tm.lines < 60:
+		return 250 * time.Millisecond
+	case tm.lines < 70:
+		return 200 * time.Millisecond
+	default:
+		return 150 * time.Millisecond
+	}
 }
 
 type drawableCellsCache struct {
