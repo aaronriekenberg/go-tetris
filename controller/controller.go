@@ -43,7 +43,7 @@ func runEventLoop(
 	view view.View,
 	tetrisModel model.TetrisModel,
 ) {
-	setPeriodicUpdateTimer(tetrisModel.UpdateDuration(), eventSource)
+	setPeriodicUpdateTimer(tetrisModel.PeriodicUpdateDuration(), eventSource)
 
 	done := false
 
@@ -69,7 +69,7 @@ func runEventLoop(
 			switch ev.Data().(type) {
 			case periodicUpdateInterruptCustomEvent:
 				tetrisModel.PeriodicUpdate()
-				setPeriodicUpdateTimer(tetrisModel.UpdateDuration(), eventSource)
+				setPeriodicUpdateTimer(tetrisModel.PeriodicUpdateDuration(), eventSource)
 
 				view.Draw()
 			}

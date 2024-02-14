@@ -21,7 +21,7 @@ type DrawableInfoModel interface {
 	DrawableCells() DrawableCellsMap
 	Lines() int
 	GameOver() bool
-	UpdateDuration() time.Duration
+	PeriodicUpdateDuration() time.Duration
 }
 
 type TetrisModel interface {
@@ -272,7 +272,7 @@ func (tm *tetrisModel) PeriodicUpdate() {
 	tm.invalidateDrawableCellsCache()
 }
 
-func (tm *tetrisModel) UpdateDuration() time.Duration {
+func (tm *tetrisModel) PeriodicUpdateDuration() time.Duration {
 	switch {
 	case tm.lines < 10 || tm.gameOver:
 		return 500 * time.Millisecond
