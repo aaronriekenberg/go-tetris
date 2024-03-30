@@ -9,8 +9,7 @@ import (
 )
 
 type ScreenEventSource interface {
-	PollEvent() tcell.Event
-	PostEvent(ev tcell.Event) error
+	ChannelEvents(ch chan<- tcell.Event, quit <-chan struct{})
 	Fini()
 }
 

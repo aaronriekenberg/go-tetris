@@ -27,24 +27,11 @@ func Run() {
 	)
 }
 
-func setPeriodicUpdateTimer(
-	duration time.Duration,
-	eventSource view.ScreenEventSource,
-) {
-	go func() {
-		time.Sleep(duration)
-
-		eventSource.PostEvent(tcell.NewEventInterrupt(periodicUpdateInterruptCustomEvent{}))
-	}()
-}
-
 func runEventLoop(
 	eventSource view.ScreenEventSource,
 	view view.View,
 	tetrisModel model.TetrisModel,
 ) {
-	setPeriodicUpdateTimer(tetrisModel.PeriodicUpdateDuration(), eventSource)
-
 	done := false
 
 	quit := func() {
@@ -62,62 +49,64 @@ func runEventLoop(
 	}
 	defer quit()
 
-	for !done {
-		ev := eventSource.PollEvent()
-		switch ev := ev.(type) {
-		case *tcell.EventInterrupt:
-			switch ev.Data().(type) {
-			case periodicUpdateInterruptCustomEvent:
-				tetrisModel.PeriodicUpdate()
-				setPeriodicUpdateTimer(tetrisModel.PeriodicUpdateDuration(), eventSource)
+	eventChannel := make(chan tcell.Event)
 
-				view.Draw()
-			}
-		case *tcell.EventKey:
-			switch ev.Key() {
-			case tcell.KeyEscape:
-				if !utils.RunningInWASM {
-					quit()
-				}
-			case tcell.KeyLeft:
-				tetrisModel.MoveCurrentPieceLeft()
-				view.Draw()
-			case tcell.KeyRight:
-				tetrisModel.MoveCurrentPieceRight()
-				view.Draw()
-			case tcell.KeyUp:
-				tetrisModel.RotateCurrentPiece()
-				view.Draw()
-			case tcell.KeyDown:
-				tetrisModel.MoveCurrentPieceDown()
-				view.Draw()
-			case tcell.KeyRune:
-				switch ev.Rune() {
-				case 'q':
+	go eventSource.ChannelEvents(eventChannel, make(chan struct{}))
+
+	periodicUpdateChannel := time.After(tetrisModel.PeriodicUpdateDuration())
+
+	for !done {
+		select {
+		case <-periodicUpdateChannel:
+			tetrisModel.PeriodicUpdate()
+			view.Draw()
+
+			periodicUpdateChannel = time.After(tetrisModel.PeriodicUpdateDuration())
+		case ev := <-eventChannel:
+			switch ev := ev.(type) {
+			case *tcell.EventKey:
+				switch ev.Key() {
+				case tcell.KeyEscape:
 					if !utils.RunningInWASM {
 						quit()
 					}
-				case 'r':
-					tetrisModel.Restart()
+				case tcell.KeyLeft:
+					tetrisModel.MoveCurrentPieceLeft()
 					view.Draw()
-				case ' ':
-					tetrisModel.DropCurrentPiece()
+				case tcell.KeyRight:
+					tetrisModel.MoveCurrentPieceRight()
 					view.Draw()
-				case 'v':
-					view.ToggleShowVersion()
+				case tcell.KeyUp:
+					tetrisModel.RotateCurrentPiece()
+					view.Draw()
+				case tcell.KeyDown:
+					tetrisModel.MoveCurrentPieceDown()
+					view.Draw()
+				case tcell.KeyRune:
+					switch ev.Rune() {
+					case 'q':
+						if !utils.RunningInWASM {
+							quit()
+						}
+					case 'r':
+						tetrisModel.Restart()
+						view.Draw()
+					case ' ':
+						tetrisModel.DropCurrentPiece()
+						view.Draw()
+					case 'v':
+						view.ToggleShowVersion()
+					}
 				}
+			case *tcell.EventMouse:
+				buttonMask := ev.Buttons()
+				if (buttonMask & tcell.Button1) != 0 {
+					x, y := ev.Position()
+					view.HandleButton1PressEvent(x, y, ev.When())
+				}
+			case *tcell.EventResize:
+				view.HandleResizeEvent()
 			}
-		case *tcell.EventMouse:
-			buttonMask := ev.Buttons()
-			if (buttonMask & tcell.Button1) != 0 {
-				x, y := ev.Position()
-				view.HandleButton1PressEvent(x, y, ev.When())
-			}
-		case *tcell.EventResize:
-			view.HandleResizeEvent()
 		}
 	}
-
 }
-
-type periodicUpdateInterruptCustomEvent struct{}
