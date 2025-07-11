@@ -6,6 +6,10 @@
   font-family: "Menlo", "Andale Mono", "Courier New", Monospace;
 }
 
+#terminal-container {
+  text-align: center;
+}
+
 #terminal {
   background-color: black;
   color: green;
