@@ -41,7 +41,7 @@ jobs:
           echo "before go build"
           go version
           GOOS=js GOARCH=wasm go build -o wasm/tetris.wasm
-          cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" wasm/
+          cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
           ls -latrh wasm
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
