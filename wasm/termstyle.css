@@ -22,7 +22,7 @@
   -khtml-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  --cursor-color: lightgrey;
+  --cursor-color: var(--bg);
 }
 
 /* Style attributes */
