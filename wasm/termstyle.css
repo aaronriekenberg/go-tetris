@@ -11,7 +11,8 @@
 }
 
 #terminal {
-  background-color: black;
+  border: 1px solid var(--fg);
+  background-color: white;
   color: green;
   display: inline-block;
 
@@ -71,9 +72,11 @@
 .cursor-steady-block {
   background-color: var(--cursor-color) !important;
 }
+
 .cursor-blinking-block {
   animation: blinking-block 1s step-start infinite !important;
 }
+
 @keyframes blinking-block {
   50% {
     background-color: var(--cursor-color);
@@ -83,9 +86,11 @@
 .cursor-steady-underline {
   text-decoration: underline var(--cursor-color) !important;
 }
+
 .cursor-blinking-underline {
   animation: blinking-underline 1s step-start infinite !important;
 }
+
 @keyframes blinking-underline {
   50% {
     text-decoration: underline var(--cursor-color);
@@ -95,15 +100,18 @@
 .cursor-steady-bar {
   margin-left: -2px;
 }
+
 .cursor-steady-bar:before {
   content: " ";
   width: 2px;
   background-color: var(--cursor-color) !important;
   display: inline-block;
 }
+
 .cursor-blinking-bar {
   margin-left: -2px;
 }
+
 .cursor-blinking-bar:before {
   content: " ";
   width: 2px;
