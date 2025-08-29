@@ -44,7 +44,7 @@ jobs:
           cp "$(go env GOROOT)/lib/wasm/wasm_exec.js" wasm/
           ls -latrh wasm
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: wasm
           retention-days: 90
