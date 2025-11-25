@@ -1,0 +1,17 @@
+name: PR check build
+
+on:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Build
+        run: go build -x
+
+      - name: Build for WASM
+        run: GOOS=js GOARCH=wasm go build -x -o wasm/tetris.wasm
