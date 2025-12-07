@@ -1,13 +1,14 @@
 package controller
 
 import (
+	"strings"
 	"time"
 
 	"github.com/aaronriekenberg/go-tetris/model"
 	"github.com/aaronriekenberg/go-tetris/utils"
 	"github.com/aaronriekenberg/go-tetris/view"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 func Run() {
@@ -49,9 +50,7 @@ func runEventLoop(
 	}
 	defer quit()
 
-	eventChannel := make(chan tcell.Event)
-
-	go eventSource.ChannelEvents(eventChannel, make(chan struct{}))
+	eventChannel := eventSource.EventQ()
 
 	periodicUpdateChannel := time.After(tetrisModel.PeriodicUpdateDuration())
 
@@ -83,18 +82,18 @@ func runEventLoop(
 					tetrisModel.MoveCurrentPieceDown()
 					view.Draw()
 				case tcell.KeyRune:
-					switch ev.Rune() {
-					case 'q':
+					switch strings.ToLower(ev.Str()) {
+					case "q":
 						if !utils.RunningInWASM {
 							quit()
 						}
-					case 'r':
+					case "r":
 						tetrisModel.Restart()
 						view.Draw()
-					case ' ':
+					case " ":
 						tetrisModel.DropCurrentPiece()
 						view.Draw()
-					case 'v':
+					case "v":
 						view.ToggleShowVersion()
 					}
 				}

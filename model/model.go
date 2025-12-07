@@ -7,7 +7,7 @@ import (
 	"github.com/aaronriekenberg/go-tetris/coordinate"
 	"github.com/aaronriekenberg/go-tetris/pieces"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 )
 
 type tetrisModelCell struct {

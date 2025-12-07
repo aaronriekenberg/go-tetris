@@ -1,7 +1,7 @@
 package pieces
 
 import (
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 
 	"github.com/aaronriekenberg/go-tetris/coordinate"
 )

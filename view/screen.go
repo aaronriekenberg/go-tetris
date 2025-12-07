@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/gdamore/tcell/v2"
-	_ "github.com/gdamore/tcell/v2/encoding"
+	"github.com/gdamore/tcell/v3"
+	_ "github.com/gdamore/tcell/v3/encoding"
 )
 
 type ScreenEventSource interface {
-	ChannelEvents(ch chan<- tcell.Event, quit <-chan struct{})
+	EventQ() chan tcell.Event
 	Fini()
 }
 

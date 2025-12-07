@@ -9,7 +9,7 @@ import (
 	"github.com/aaronriekenberg/go-tetris/utils"
 	"github.com/aaronriekenberg/go-tetris/version"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 
 	"github.com/mattn/go-runewidth"
 )
