@@ -1,5 +1,16 @@
+html {
+  --bg: #1E1F21;
+  --fg: #EEEFF1;
+}
+
+@media (prefers-color-scheme: light) {
+  html {
+    --bg: #f4f4f4;
+    --fg: #000000;
+  }
+}
+
 body {
-  background-color: white;
-  color: black;
-  text-align: center;
+  background-color: var(--bg);
+  color: var(--fg);
 }
