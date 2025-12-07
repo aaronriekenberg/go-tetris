@@ -7,11 +7,11 @@
 }
 
 #terminal-container {
-  background-color: var(--bg);
   text-align: center;
 }
 
 #terminal {
+  border: 1px solid var(--fg);
   background-color: white;
   color: green;
   display: inline-block;
