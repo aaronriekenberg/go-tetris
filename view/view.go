@@ -49,7 +49,7 @@ func NewView(
 ) View {
 
 	if utils.RunningInWASM {
-		screen.SetSize(38, 34)
+		screen.SetSize(40, 44)
 	}
 
 	screen.SetStyle(tcell.StyleDefault.
