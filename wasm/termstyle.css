@@ -8,6 +8,7 @@
 
 #terminal-container {
   text-align: center;
+  touch-action: none;
 }
 
 #terminal {
