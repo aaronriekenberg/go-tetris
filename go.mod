@@ -3,7 +3,7 @@ module github.com/aaronriekenberg/go-tetris
 go 1.25.5
 
 require (
-	github.com/gdamore/tcell/v3 v3.0.5
+	github.com/gdamore/tcell/v3 v3.0.6
 	github.com/mattn/go-runewidth v0.0.19
 )
 
