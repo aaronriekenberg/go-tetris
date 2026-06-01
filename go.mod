@@ -4,7 +4,7 @@ go 1.26.3
 
 require (
 	github.com/gdamore/tcell/v3 v3.4.0
-	github.com/mattn/go-runewidth v0.0.23
+	github.com/mattn/go-runewidth v0.0.24
 )
 
 require (
