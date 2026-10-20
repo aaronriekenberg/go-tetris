@@ -1,6 +1,6 @@
 module github.com/aaronriekenberg/go-tetris
 
-go 1.27.2
+go 1.27.3
 
 require (
 	github.com/gdamore/tcell/v3 v3.6.0
