@@ -1,6 +1,6 @@
 module github.com/aaronriekenberg/go-tetris
 
-go 1.27.3
+go 1.27.4
 
 require (
 	github.com/gdamore/tcell/v3 v3.6.0
@@ -13,6 +13,6 @@ require (
 	github.com/gdamore/encoding v1.0.1 // indirect
 	github.com/lucasb-eyer/go-colorful v1.4.1 // indirect
 	golang.org/x/sys v0.50.0 // indirect
-	golang.org/x/term v0.47.0 // indirect
+	golang.org/x/term v0.48.0 // indirect
 	golang.org/x/text v0.44.0 // indirect
 )
