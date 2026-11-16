@@ -14,5 +14,5 @@ require (
 	github.com/lucasb-eyer/go-colorful v1.4.1 // indirect
 	golang.org/x/sys v0.49.0 // indirect
 	golang.org/x/term v0.47.0 // indirect
-	golang.org/x/text v0.43.0 // indirect
+	golang.org/x/text v0.44.0 // indirect
 )
